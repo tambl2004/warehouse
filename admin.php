@@ -52,7 +52,7 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
             <div class="nav-item">
                 <a href="?option=nhacungcap" class="nav-link <?php echo $option == 'nhacungcap' ? 'active' : ''; ?>">
                     <img src="gif/nhacungcap.gif" alt="Icon" class="nav-icon">
-                    Quản lý NCC
+                    Quản lý nhà cung cấp
                 </a>
             </div>
             
@@ -170,7 +170,7 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
                         </span>
                         <ul class="dropdown-menu user-dropdown" aria-labelledby="userDropdownToggle">
                             <li><a class="dropdown-item user-link" href="?option=taikhoan"><i class="fas fa-user"></i> Tài khoản của tôi</a></li>
-                            <li><a class="dropdown-item user-link" href="#"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
+                            <li><a class="dropdown-item user-link" href="logout.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
                         </ul>
                     </div>
                 </div>

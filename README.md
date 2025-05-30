@@ -1,6 +1,144 @@
-# Hệ thống Quản lý Kho Thông Minh (Smart Warehouse Management System)
+# Hệ thống Quản lý Kho Hàng
 
-Một ứng dụng web quản lý kho hàng thông minh, hỗ trợ theo dõi sản phẩm, quản lý nhập xuất, kiểm kê và tối ưu hóa không gian lưu trữ bằng công nghệ RFID và Barcode.
+## Mô tả
+Hệ thống quản lý kho hàng hiện đại với các tính năng:
+- Quản lý sản phẩm, danh mục, nhà cung cấp
+- Nhập/xuất kho với phê duyệt
+- Quản lý RFID và mã vạch
+- Hệ thống phân quyền người dùng
+- Báo cáo và thống kê
+- Cảnh báo tồn kho và hạn sử dụng
+
+## Yêu cầu hệ thống
+- PHP 7.4 trở lên
+- MySQL 5.7 trở lên
+- XAMPP/WAMP/MAMP hoặc web server tương tự
+- Composer (để quản lý thư viện)
+
+## Cài đặt
+
+### 1. Sao chép project
+```bash
+git clone [repository-url]
+cd warehouse
+```
+
+### 2. Cài đặt dependencies
+```bash
+composer install
+```
+
+### 3. Tạo cơ sở dữ liệu
+1. Mở phpMyAdmin
+2. Tạo database tên `warehouse`
+3. Import file `warehouse.sql`
+4. Import file `sample_data.sql` để có dữ liệu mẫu
+
+### 4. Cấu hình
+1. Chỉnh sửa file `config/config.php` theo môi trường của bạn
+2. Cập nhật thông tin email trong `inc/mail_helper.php`
+
+### 5. Chạy ứng dụng
+1. Khởi động XAMPP/WAMP/MAMP
+2. Truy cập: `http://localhost/warehouse`
+
+## Tài khoản mặc định
+
+Sau khi import dữ liệu mẫu, bạn có thể đăng nhập với:
+
+### Admin
+- Username: `admin`
+- Password: `admin123`
+
+### Nhân viên
+- Username: `nhanvien1`
+- Password: `admin123`
+
+### User
+- Username: `user1`
+- Password: `admin123`
+
+## Cấu trúc thư mục
+
+```
+warehouse/
+├── config/          # Cấu hình ứng dụng
+├── inc/            # Các file include chung
+├── css/            # File CSS
+├── js/             # File JavaScript
+├── vendor/         # Thư viện Composer
+├── uploads/        # File upload
+├── tmp/            # File tạm
+├── logs/           # Log files
+├── login.php       # Trang đăng nhập
+├── register.php    # Trang đăng ký
+├── forgot_password.php # Quên mật khẩu
+└── index.php       # Trang chủ
+```
+
+## Tính năng chính
+
+### 1. Xác thực người dùng
+- Đăng ký với xác thực email OTP
+- Đăng nhập an toàn
+- Quên mật khẩu với OTP
+- Khóa tài khoản tự động khi đăng nhập sai
+
+### 2. Phân quyền
+- **Admin**: Toàn quyền quản lý hệ thống
+- **Employee**: Quản lý kho, sản phẩm, nhập/xuất
+- **User**: Chỉ xem thông tin
+
+### 3. Quản lý sản phẩm
+- CRUD sản phẩm với hình ảnh
+- Quản lý danh mục
+- Theo dõi tồn kho
+- Cảnh báo hết hạn
+
+### 4. Nhập/xuất kho
+- Tạo phiếu nhập/xuất
+- Hệ thống phê duyệt
+- Theo dõi lịch sử
+
+### 5. RFID & Mã vạch
+- Quản lý thẻ RFID
+- Quản lý mã vạch
+- Lịch sử quét
+
+### 6. Báo cáo
+- Báo cáo tồn kho
+- Báo cáo nhập/xuất
+- Xuất PDF/Excel
+
+## Bảo mật
+
+Hệ thống đã tích hợp các biện pháp bảo mật:
+- Mã hóa mật khẩu với bcrypt
+- CSRF protection
+- SQL injection prevention
+- XSS protection
+- Rate limiting
+- Session security
+
+## Hỗ trợ
+
+Nếu gặp vấn đề, vui lòng:
+1. Kiểm tra log trong thư mục `logs/`
+2. Đảm bảo cấu hình database đúng
+3. Kiểm tra quyền thư mục upload và tmp
+
+## Phát triển
+
+Để phát triển thêm tính năng:
+1. Tuân thủ cấu trúc MVC
+2. Sử dụng prepared statements cho database
+3. Validate và sanitize input
+4. Ghi log các hoạt động quan trọng
+5. Test thoroughly trước khi deploy
+
+## License
+
+[Chọn license phù hợp]
 
 ---
 
