@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+        body {
+            background: #ffffff; /* Màu nền sáng, trắng xanh */
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif; 
+            display: flex;
+            height: 100vh;
+        }
+        .pagination {
+            margin: auto;
+            padding: 8px 20px;
+            background: #ffffff; /* Màu nền sáng cho pagination */
+            border: 2px solid #00bcd4; /* Màu xanh sáng hơn */
+            border-radius: 40px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1); /* Giảm độ tối của bóng */
+            color: #00bcd4; /* Màu chữ xanh sáng hơn */
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .button {
+            padding: 10px;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+        .page-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+        .page-number:hover,
+        .button:hover {
+            opacity: 0.8;
+        }
+        .page-number.active {
+            background: #00bcd4; /* Màu nền sáng hơn cho trang đang hoạt động */
+            color: #ffffff; /* Màu chữ trắng cho dễ đọc */
+            font-weight: 700;
+            animation: jump 0.3s ease;
+        }
+        @keyframes jump {
+          from {
+            transform: translateY(10px);
+          }
+          to {
+            transform: translateY(0);
+          }
+        }
+        </style>
+</head>
+</body>
+<div class="pagination">
+    <div class="button prev">prev</div>
+    <div class="page-number active">1</div>
+    <div class="page-number">2</div>
+    <div class="page-number">3</div>
+    <div class="page-number">4</div>
+    <div class="page-number">5</div>    
+    <div class="button next">next</div>
+</div>
+<body>
+    <script>
+        const pagination = document.querySelector('.pagination');
+        const numbers = Array.from(pagination.querySelectorAll('.page-number'));
+
+        let currentNumber = 0;
+
+        handleClick();
+        function handleClick(){
+            pagination.addEventListener('click', (e) => {
+                const target = e.target;
+                if(target.classList.contains('page-number')){
+                    currentNumber = numbers.indexOf(target);
+                    activeNumber();    
+                }
+                if(target.classList.contains('prev') && currentNumber > 0)
+                    currentNumber--;
+                if(target.classList.contains('next') && currentNumber < numbers.length - 1)
+                    currentNumber++;
+                activeNumber();
+            })
+        }
+        function activeNumber(){
+            removeActive();
+            numbers[currentNumber].classList.add('active');
+        }
+        function removeActive(){
+            numbers.forEach(number => {
+                number.classList.remove('active');
+            })
+        }
+    </script>
+</html>
