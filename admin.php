@@ -35,37 +35,27 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
                     </a>
                 </div>
             </div>
-
-            <div class="nav-section">
-                <div class="nav-item">
-                    <a href="#" class="nav-link" onclick="toggleDropdown(event, 'categoryDropdown')">
-                        <img src="gif/danhmuc.gif" alt="Icon" class="nav-icon">
-                        Quản lý danh mục
-                        <i class=" dropdown-toggle ms-auto" id="categoryToggle" style="font-size: 20px;"></i>
-                    </a>
-                </div>
-                <div class="nav-dropdown" id="categoryDropdown">
-                    <div class="nav-item">
-                        <a href="?option=sanpham" class="nav-link <?php echo $option == 'sanpham' ? 'active' : ''; ?>">
-                            <img src="gif/sanpham.gif" alt="Icon" class="nav-icon">
-                            Quản lý sản phẩm
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="?option=nhacungcap" class="nav-link <?php echo $option == 'nhacungcap' ? 'active' : ''; ?>">
-                            <img src="gif/nhacungcap.gif" alt="Icon" class="nav-icon">
-                            Quản lý NCC
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="?option=taikhoan" class="nav-link <?php echo $option == 'taikhoan' ? 'active' : ''; ?>">
-                            <img src="gif/taikhoan.gif" alt="Icon" class="nav-icon">
-                            Quản lý tài khoản
-                        </a>
-                    </div>
-                </div>
+            <div class="nav-item">
+                <a href="?option=sanpham" class="nav-link <?php echo $option == 'sanpham' ? 'active' : ''; ?>">
+                    <img src="gif/sanpham.gif" alt="Icon" class="nav-icon">
+                    Quản lý sản phẩm
+                </a>
+            </div>
+           
+            <div class="nav-item">
+                <a href="?option=nguoidung" class="nav-link <?php echo $option == 'nguoidung' ? 'active' : ''; ?>">
+                    <img src="gif/taikhoan.gif" alt="Icon" class="nav-icon">
+                    Quản lý người dùng
+                </a>
             </div>
 
+            <div class="nav-item">
+                <a href="?option=nhacungcap" class="nav-link <?php echo $option == 'nhacungcap' ? 'active' : ''; ?>">
+                    <img src="gif/nhacungcap.gif" alt="Icon" class="nav-icon">
+                    Quản lý NCC
+                </a>
+            </div>
+            
             <div class="nav-section">
                 <div class="nav-item">
                     <a href="?option=kho" class="nav-link <?php echo $option == 'kho' ? 'active' : ''; ?>">
@@ -111,23 +101,7 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
                    
                 </div>
             </div>
-
-            <div class="nav-section">
-                <div class="nav-item">
-                    <a href="?option=hethongIoT" class="nav-link <?php echo $option == 'hethongIoT' ? 'active' : ''; ?>">
-                        <img src="gif/barcode.gif" alt="Icon" class="nav-icon">
-                        Hệ thống Barcode
-                    </a>
-                </div>
-            </div>
-            <div class="nav-section">
-                <div class="nav-item">
-                    <a href="?option=tichhop" class="nav-link <?php echo $option == 'tichhop' ? 'active' : ''; ?>">
-                        <img src="gif/IoT.gif" alt="Icon" class="nav-icon">
-                        Hệ thống IoT & RFID
-                    </a>
-                </div>
-            </div>
+            
 
             <div class="nav-section">
                 <div class="nav-item">
@@ -139,10 +113,29 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
             </div>
             <div class="nav-section">
                 <div class="nav-item">
-                    <a href="?option=caidat" class="nav-link <?php echo $option == 'caidat' ? 'active' : ''; ?>">
+                    <a href="#" class="nav-link" onclick="toggleDropdown(event, 'settingDropdown')">
                         <img src="gif/setting.gif" alt="Icon" class="nav-icon">
                         Cài đặt hệ thống
+                        <i class=" dropdown-toggle ms-auto" id="settingToggle" style="font-size: 20px;"></i>
                     </a>
+                </div>
+                <div class="nav-dropdown" id="settingDropdown">
+                    <div class="nav-section">
+                        <div class="nav-item">
+                            <a href="?option=hethongIoT" class="nav-link <?php echo $option == 'hethongIoT' ? 'active' : ''; ?>">
+                                <img src="gif/barcode.gif" alt="Icon" class="nav-icon">
+                                Hệ thống Barcode
+                            </a>
+                        </div>
+                    </div>
+                    <div class="nav-section">
+                        <div class="nav-item">
+                            <a href="?option=tichhop" class="nav-link <?php echo $option == 'tichhop' ? 'active' : ''; ?>">
+                                <img src="gif/IoT.gif" alt="Icon" class="nav-icon">
+                                Hệ thống IoT & RFID
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -176,7 +169,7 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
                             Tâm
                         </span>
                         <ul class="dropdown-menu user-dropdown" aria-labelledby="userDropdownToggle">
-                            <li><a class="dropdown-item user-link" href="#"><i class="fas fa-user"></i> Tài khoản của tôi</a></li>
+                            <li><a class="dropdown-item user-link" href="?option=taikhoan"><i class="fas fa-user"></i> Tài khoản của tôi</a></li>
                             <li><a class="dropdown-item user-link" href="#"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
                         </ul>
                     </div>
@@ -202,7 +195,7 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
                     case 'taikhoan':
                         include 'views/taikhoancuatoi.php';
                         break;
-                    case 'nhanvien':
+                    case 'nguoidung':
                         include 'views/nguoidung.php';
                         break;
                     case 'kho':
@@ -292,12 +285,6 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
             });
         });
 
-        // Simulate search functionality
-        document.querySelector('.search-box input').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            // Here you would implement actual search logic
-            console.log('Searching for:', searchTerm);
-        });
 
 
         document.addEventListener('DOMContentLoaded', function () {
