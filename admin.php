@@ -1,6 +1,8 @@
 <?php
 session_start();
 include 'config/connect.php';
+require_once 'inc/auth.php';
+require_once 'inc/security.php';
 
 $option = isset($_GET['option']) ? $_GET['option'] : 'home';    
 ?>
@@ -14,6 +16,7 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/chucnang.css">
 </head>
 <body>
     <!-- Sidebar -->
@@ -235,7 +238,8 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
+    
+ <script>
 
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');

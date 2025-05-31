@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: localhost
--- Thời gian đã tạo: Th5 30, 2025 lúc 05:21 PM
+-- Thời gian đã tạo: Th5 31, 2025 lúc 03:50 PM
 -- Phiên bản máy phục vụ: 5.7.24
 -- Phiên bản PHP: 8.3.1
 
@@ -463,6 +463,21 @@ CREATE TABLE `system_logs` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Lưu nhật ký hệ thống chung';
 
+--
+-- Đang đổ dữ liệu cho bảng `system_logs`
+--
+
+INSERT INTO `system_logs` (`log_id`, `log_level`, `message`, `source`, `created_at`) VALUES
+(1, 'INFO', 'LOGIN_FAIL_USER_NOT_FOUND_OR_INACTIVE', 'Thất bại đăng nhập, người dùng không tồn tại hoặc chưa kích hoạt: admin1', '2025-05-30 17:42:11'),
+(2, 'INFO', 'LOGIN_FAIL_USER_NOT_FOUND_OR_INACTIVE', 'Thất bại đăng nhập, người dùng không tồn tại hoặc chưa kích hoạt: quan', '2025-05-30 17:42:18'),
+(3, 'INFO', 'LOGIN_FAIL_USER_NOT_FOUND_OR_INACTIVE', 'Thất bại đăng nhập, người dùng không tồn tại hoặc chưa kích hoạt: nam', '2025-05-30 18:08:22'),
+(4, 'INFO', 'INACTIVE_USER_OVERWRITE', 'Xóa tài khoản chưa active (ID: 8) để đăng ký lại với email: nam@gmail.com', '2025-05-30 18:24:54'),
+(5, 'INFO', 'REGISTRATION_OTP_SENT_SYS', 'Đã gửi OTP đăng ký cho email: vantamst99@gmail.com, username tạm: nam, UserID (chưa active): 11', '2025-05-30 18:56:14'),
+(6, 'INFO', 'REGISTRATION_OTP_SENT_SYS', 'Đã gửi OTP đăng ký cho email: vantamst99@gmail.com, username tạm: tam2, UserID (chưa active): 12', '2025-05-30 18:57:53'),
+(7, 'INFO', 'INACTIVE_USER_CLEANUP_ON_REGISTER', 'Xóa tài khoản chưa active (ID: 12) có username/email trùng khi đăng ký mới.', '2025-05-30 18:58:58'),
+(8, 'INFO', 'REGISTRATION_OTP_SENT_SYS', 'Đã gửi OTP đăng ký cho email: vantamst99@gmail.com, username tạm: tam2, UserID (chưa active): 13', '2025-05-30 18:59:03'),
+(9, 'INFO', 'INACTIVE_USER_CLEANUP_ON_REGISTER', 'Xóa tài khoản chưa active (ID: 14) có username/email trùng khi đăng ký mới.', '2025-05-30 19:13:23');
+
 -- --------------------------------------------------------
 
 --
@@ -493,9 +508,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `full_name`, `password_hash`, `email`, `role`, `is_locked`, `login_attempts`, `otp`, `otp_expiry`, `is_active`, `last_login`, `last_login_ip`, `last_login_device`, `created_at`, `updated_at`) VALUES
-(5, 'admin', 'Đào Văn Tâm', '$2y$10$W95IGnP7bfiJyzBAAzOCX.emUrt6bJsPV1tedJDSv1dDm4cQfmCrW', 'vantamst97@gmail.com', 'admin', 0, 0, NULL, NULL, 1, '2025-05-31 00:09:02', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 17:04:12', '2025-05-30 17:09:02'),
+(5, 'admin', 'Đào Văn Tâm', '$2y$10$W95IGnP7bfiJyzBAAzOCX.emUrt6bJsPV1tedJDSv1dDm4cQfmCrW', 'vantamst97@gmail.com', 'admin', 0, 0, NULL, NULL, 1, '2025-05-31 13:41:29', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 17:04:12', '2025-05-31 06:41:29'),
 (6, 'tam', 'Đào Văn Tâm', '$2y$10$P.hsTE/dRjYmc2CfM8ZidOroMurpYp15xFp/SZo7sxj0ZJaDvlOey', 'zzztamdzzz@gmail.com', 'user', 0, 0, NULL, NULL, 1, '2025-05-31 00:17:06', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 17:09:33', '2025-05-30 17:17:06'),
-(7, 'quan', 'Vũ Minh Quân', '$2y$10$NocSlSVs9pb.MFSAev2h5u6d9cFpZeGUJ4yatoSzsDyvvfGnMV/Di', 'quan@gmail.com', 'user', 0, 0, '155782', '2025-05-31 00:44:38', 0, '2025-05-31 00:15:32', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 17:14:38', '2025-05-30 17:15:32');
+(13, 'tam2', 'Đào Văn Tâm', '$2y$10$IYy273UCIEYv1JzFnYNXQe8J5K9nGTOe5kqmL4wesBU1T25PgNQpe', 'vantamst99@gmail.com', 'user', 0, 0, NULL, NULL, 1, '2025-05-31 02:00:06', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 18:58:58', '2025-05-30 19:00:06');
 
 -- --------------------------------------------------------
 
@@ -524,10 +539,16 @@ INSERT INTO `user_logs` (`log_id`, `user_id`, `action`, `description`, `ip_addre
 (4, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 17:09:02'),
 (5, 6, 'REGISTER', 'Kích hoạt tài khoản thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 17:09:52'),
 (6, 6, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 17:09:55'),
-(7, 6, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 17:10:37'),
-(8, 7, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 17:15:32'),
 (9, 6, 'RESET_PASSWORD', 'Đặt lại mật khẩu thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 17:17:03'),
-(10, 6, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 17:17:06');
+(10, 6, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 17:17:06'),
+(11, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 17:24:40'),
+(12, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 17:42:03'),
+(15, 13, 'ACCOUNT_ACTIVATION_SUCCESS', 'Kích hoạt tài khoản thành công qua OTP.', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 18:59:38'),
+(16, 13, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 19:00:06'),
+(17, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 19:00:46'),
+(18, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 19:14:49'),
+(19, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-31 06:41:24'),
+(20, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-31 06:41:29');
 
 -- --------------------------------------------------------
 
@@ -872,19 +893,19 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT cho bảng `system_logs`
 --
 ALTER TABLE `system_logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT cho bảng `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT cho bảng `user_logs`
 --
 ALTER TABLE `user_logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT cho bảng `warehouse_areas`
