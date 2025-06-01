@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: localhost
--- Thời gian đã tạo: Th5 31, 2025 lúc 03:50 PM
+-- Thời gian đã tạo: Th6 01, 2025 lúc 04:06 PM
 -- Phiên bản máy phục vụ: 5.7.24
 -- Phiên bản PHP: 8.3.1
 
@@ -101,7 +101,7 @@ CREATE TABLE `categories` (
 INSERT INTO `categories` (`category_id`, `category_name`, `description`, `created_at`, `updated_at`) VALUES
 (1, 'Thực phẩm khô', 'Gạo, bún, mì, các loại đậu', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
 (2, 'Thực phẩm tươi sống', 'Thịt, cá, rau củ quả', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
-(3, 'Đồ uống', 'Nước ngọt, bia, rượu, nước suối', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
+(3, 'Đồ uống', 'Nước ngọt, bia, rượu, nước suối, nước có ga', '2025-05-30 16:49:23', '2025-06-01 14:10:02'),
 (4, 'Gia vị', 'Muối, đường, nước mắm, tương ớt', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
 (5, 'Hàng gia dụng', 'Bát đĩa, nồi niêu, đồ dùng nhà bếp', '2025-05-30 16:49:23', '2025-05-30 16:49:23');
 
@@ -222,6 +222,16 @@ CREATE TABLE `password_reset_tokens` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Lưu token reset mật khẩu';
 
+--
+-- Đang đổ dữ liệu cho bảng `password_reset_tokens`
+--
+
+INSERT INTO `password_reset_tokens` (`token_id`, `user_id`, `token`, `expiry_time`, `created_at`) VALUES
+(1, 13, '71a82123ba27f0c29c9d8bdab210de9ee498b0935f361ff03006bb822153006f', '2025-05-31 17:50:19', '2025-05-31 16:50:19'),
+(2, 6, '04a79e7b40e2f96c1f9f0edd8e2d07ee63c0140f4c4d3557968037bce01a12cf', '2025-05-31 18:53:47', '2025-05-31 17:53:47'),
+(3, 6, '8b06c1e0017d9fdc7e86967fb17f37a22e49bcccd6bbe93d02a15d305e2999ed', '2025-05-31 18:57:50', '2025-05-31 17:57:50'),
+(4, 14, '75c1706b288422fd4acf0be5deaccfb9e3c22001dac0b06a9d327c6b1968ffd6', '2025-05-31 19:19:17', '2025-05-31 18:19:17');
+
 -- --------------------------------------------------------
 
 --
@@ -257,6 +267,31 @@ INSERT INTO `products` (`product_id`, `sku`, `product_name`, `description`, `uni
 (6, 'SP006', 'Bún khô Bình Tây 500g', 'Bún khô truyền thống Bình Tây gói 500g', 15000.00, 300, NULL, 1, 0.80, NULL, 'in_stock', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
 (7, 'SP007', 'Cá hồi Na Uy 1kg', 'Cá hồi tươi nhập khẩu Na Uy', 350000.00, 20, NULL, 2, 1.50, NULL, 'in_stock', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
 (8, 'SP008', 'Bia Heineken 330ml', 'Bia Heineken lon 330ml', 18000.00, 400, NULL, 3, 0.33, NULL, 'in_stock', '2025-05-30 16:49:23', '2025-05-30 16:49:23');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `product_locations`
+--
+
+CREATE TABLE `product_locations` (
+  `product_id` int(11) NOT NULL,
+  `shelf_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT '0',
+  `last_updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `quyen_vai_tro`
+--
+
+CREATE TABLE `quyen_vai_tro` (
+  `id` int(11) NOT NULL,
+  `role` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `permission` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -476,7 +511,10 @@ INSERT INTO `system_logs` (`log_id`, `log_level`, `message`, `source`, `created_
 (6, 'INFO', 'REGISTRATION_OTP_SENT_SYS', 'Đã gửi OTP đăng ký cho email: vantamst99@gmail.com, username tạm: tam2, UserID (chưa active): 12', '2025-05-30 18:57:53'),
 (7, 'INFO', 'INACTIVE_USER_CLEANUP_ON_REGISTER', 'Xóa tài khoản chưa active (ID: 12) có username/email trùng khi đăng ký mới.', '2025-05-30 18:58:58'),
 (8, 'INFO', 'REGISTRATION_OTP_SENT_SYS', 'Đã gửi OTP đăng ký cho email: vantamst99@gmail.com, username tạm: tam2, UserID (chưa active): 13', '2025-05-30 18:59:03'),
-(9, 'INFO', 'INACTIVE_USER_CLEANUP_ON_REGISTER', 'Xóa tài khoản chưa active (ID: 14) có username/email trùng khi đăng ký mới.', '2025-05-30 19:13:23');
+(9, 'INFO', 'INACTIVE_USER_CLEANUP_ON_REGISTER', 'Xóa tài khoản chưa active (ID: 14) có username/email trùng khi đăng ký mới.', '2025-05-30 19:13:23'),
+(10, 'INFO', 'LOGIN_FAIL_USER_NOT_FOUND_OR_INACTIVE', 'Thất bại đăng nhập, người dùng không tồn tại hoặc chưa kích hoạt: root', '2025-05-31 17:15:47'),
+(11, 'INFO', 'LOGIN_FAIL_USER_NOT_FOUND_OR_INACTIVE', 'Thất bại đăng nhập, người dùng không tồn tại hoặc chưa kích hoạt: tam', '2025-05-31 18:14:24'),
+(12, 'INFO', 'LOGIN_FAIL_USER_NOT_FOUND_OR_INACTIVE', 'Thất bại đăng nhập, người dùng không tồn tại hoặc chưa kích hoạt: tam', '2025-05-31 18:15:28');
 
 -- --------------------------------------------------------
 
@@ -508,9 +546,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `full_name`, `password_hash`, `email`, `role`, `is_locked`, `login_attempts`, `otp`, `otp_expiry`, `is_active`, `last_login`, `last_login_ip`, `last_login_device`, `created_at`, `updated_at`) VALUES
-(5, 'admin', 'Đào Văn Tâm', '$2y$10$W95IGnP7bfiJyzBAAzOCX.emUrt6bJsPV1tedJDSv1dDm4cQfmCrW', 'vantamst97@gmail.com', 'admin', 0, 0, NULL, NULL, 1, '2025-05-31 13:41:29', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 17:04:12', '2025-05-31 06:41:29'),
-(6, 'tam', 'Đào Văn Tâm', '$2y$10$P.hsTE/dRjYmc2CfM8ZidOroMurpYp15xFp/SZo7sxj0ZJaDvlOey', 'zzztamdzzz@gmail.com', 'user', 0, 0, NULL, NULL, 1, '2025-05-31 00:17:06', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 17:09:33', '2025-05-30 17:17:06'),
-(13, 'tam2', 'Đào Văn Tâm', '$2y$10$IYy273UCIEYv1JzFnYNXQe8J5K9nGTOe5kqmL4wesBU1T25PgNQpe', 'vantamst99@gmail.com', 'user', 0, 0, NULL, NULL, 1, '2025-05-31 02:00:06', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 18:58:58', '2025-05-30 19:00:06');
+(5, 'admin', 'Đào Văn Tâm', '$2y$10$W95IGnP7bfiJyzBAAzOCX.emUrt6bJsPV1tedJDSv1dDm4cQfmCrW', 'vantamst97@gmail.com', 'admin', 0, 0, NULL, NULL, 1, '2025-06-01 18:34:11', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-30 17:04:12', '2025-06-01 11:34:11'),
+(6, 'tam', 'Đào Văn Tâm', '$2y$10$MIighf3auCZATFwT5hiBKOdXSQJvktByka5lLk0/QsAcL021cAfz2', 'zzztamdzzz@gmail.com', 'user', 0, 0, NULL, NULL, 1, '2025-06-01 01:15:51', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-30 17:09:33', '2025-05-31 18:15:51'),
+(13, 'tam2', 'Đào Văn Tâm', '$2y$10$AzcZRNOZJ7sYsr1ctznKEepX1vOrrPiAT6q63KNYwLvFYJ7XKVc0K', 'vantamst99@gmail.com', 'employee', 1, 0, NULL, NULL, 1, '2025-06-01 00:50:23', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-30 18:58:58', '2025-05-31 18:16:13'),
+(14, 'quan', 'Vũ Minh Quân', '$2y$10$MB1Jj6XHpyL5MOzgtIyBMur8NNzH557wM4vn0VTa2g2JwcvaHGsHa', 'quan@gmail.com', 'user', 0, 0, '912361', '2025-06-01 01:14:39', 0, NULL, NULL, NULL, '2025-05-31 17:59:39', '2025-05-31 18:16:02');
 
 -- --------------------------------------------------------
 
@@ -548,7 +587,29 @@ INSERT INTO `user_logs` (`log_id`, `user_id`, `action`, `description`, `ip_addre
 (17, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 19:00:46'),
 (18, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-30 19:14:49'),
 (19, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-31 06:41:24'),
-(20, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-31 06:41:29');
+(20, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', '2025-05-31 06:41:29'),
+(21, 5, 'UPDATE_USER', 'Cập nhật tài khoản: tam2 (ID: 13)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 16:49:01'),
+(22, 5, 'LOCK_USER', 'Đã khóa tài khoản: tam2 (ID: 13)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 16:49:23'),
+(23, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 16:49:55'),
+(24, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 17:15:50'),
+(25, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 17:19:43'),
+(26, 5, 'UNLOCK_USER', 'Đã mở khóa tài khoản: tam2 (ID: 13)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 17:50:14'),
+(27, 13, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 17:50:23'),
+(28, 6, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 17:50:28'),
+(29, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 17:50:35'),
+(30, 5, 'CREATE_USER', 'Tạo tài khoản mới: quan (ID: 14)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 17:59:39'),
+(31, 5, 'DEACTIVATE_USER', 'Ngưng hoạt động tài khoản: tam (ID: 6)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 18:14:09'),
+(32, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 18:14:37'),
+(33, 6, 'RESET_PASSWORD', 'Đặt lại mật khẩu thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 18:15:22'),
+(34, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 18:15:36'),
+(35, 5, 'ACTIVATE_USER', 'Kích hoạt lại tài khoản: tam (ID: 6)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 18:15:45'),
+(36, 6, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 18:15:51'),
+(37, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 18:15:56'),
+(38, 5, 'DEACTIVATE_USER', 'Ngưng hoạt động tài khoản: quan (ID: 14)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 18:16:02'),
+(39, 5, 'LOCK_USER', 'Đã khóa tài khoản: tam2 (ID: 13)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 18:16:18'),
+(40, 5, 'RESET_PASSWORD_INIT', 'Khởi tạo reset mật khẩu cho: quan (ID: 14)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-31 18:19:21'),
+(41, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-01 11:34:12'),
+(42, 5, 'EDIT_CATEGORY', 'Cập nhật danh mục ID: 3 - Tên: Đồ uống', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-01 14:10:02');
 
 -- --------------------------------------------------------
 
@@ -677,6 +738,20 @@ ALTER TABLE `products`
   ADD KEY `fk_product_category` (`category_id`),
   ADD KEY `idx_expiry_date` (`expiry_date`),
   ADD KEY `idx_stock_quantity` (`stock_quantity`);
+
+--
+-- Chỉ mục cho bảng `product_locations`
+--
+ALTER TABLE `product_locations`
+  ADD PRIMARY KEY (`product_id`,`shelf_id`),
+  ADD KEY `shelf_id` (`shelf_id`);
+
+--
+-- Chỉ mục cho bảng `quyen_vai_tro`
+--
+ALTER TABLE `quyen_vai_tro`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `role_permission` (`role`,`permission`);
 
 --
 -- Chỉ mục cho bảng `report_schedules`
@@ -833,13 +908,19 @@ ALTER TABLE `maintenance_records`
 -- AUTO_INCREMENT cho bảng `password_reset_tokens`
 --
 ALTER TABLE `password_reset_tokens`
-  MODIFY `token_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `token_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT cho bảng `products`
 --
 ALTER TABLE `products`
   MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT cho bảng `quyen_vai_tro`
+--
+ALTER TABLE `quyen_vai_tro`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `report_schedules`
@@ -893,19 +974,19 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT cho bảng `system_logs`
 --
 ALTER TABLE `system_logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT cho bảng `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT cho bảng `user_logs`
 --
 ALTER TABLE `user_logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT cho bảng `warehouse_areas`
@@ -990,6 +1071,13 @@ ALTER TABLE `password_reset_tokens`
 --
 ALTER TABLE `products`
   ADD CONSTRAINT `fk_product_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`);
+
+--
+-- Ràng buộc cho bảng `product_locations`
+--
+ALTER TABLE `product_locations`
+  ADD CONSTRAINT `product_locations_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`),
+  ADD CONSTRAINT `product_locations_ibfk_2` FOREIGN KEY (`shelf_id`) REFERENCES `shelves` (`shelf_id`);
 
 --
 -- Ràng buộc cho bảng `rfid_devices`

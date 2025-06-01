@@ -191,7 +191,7 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
 
         <!-- Content Area -->
         <div class="content-area">
-            <div class="container">
+            <div>
                 <?php
                 
                 switch ($option) {
