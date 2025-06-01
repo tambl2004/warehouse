@@ -19,7 +19,7 @@ Hệ thống quản lý kho hàng hiện đại với các tính năng:
 
 ### 1. Sao chép project
 ```bash
-git clone [repository-url]
+git clone https://github.com/tambl2004/warehouse.git
 cd warehouse
 ```
 
