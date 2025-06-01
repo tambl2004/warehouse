@@ -45,6 +45,15 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
                 </a>
             </div>
            
+            <!-- danh mục sản phẩm -->
+            <div class="nav-section">
+                <div class="nav-item">
+                    <a href="?option=danhmuc" class="nav-link <?php echo $option == 'danhmuc' ? 'active' : ''; ?>">
+                        <img src="gif/danhmuc.gif" alt="Icon" class="nav-icon">
+                        Quản lý danh mục
+                    </a>
+                </div>
+            </div>
             <div class="nav-item">
                 <a href="?option=nguoidung" class="nav-link <?php echo $option == 'nguoidung' ? 'active' : ''; ?>">
                     <img src="gif/taikhoan.gif" alt="Icon" class="nav-icon">
@@ -191,6 +200,9 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
                         break;
                     case 'sanpham':
                         include 'views/sanpham.php';
+                        break;
+                    case 'danhmuc':
+                        include 'views/danhmucsanpham.php';
                         break;
                     case 'nhacungcap':
                         include 'views/nhacungcap.php';
