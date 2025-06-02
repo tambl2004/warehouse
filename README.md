@@ -48,15 +48,15 @@ Sau khi import dữ liệu mẫu, bạn có thể đăng nhập với:
 
 ### Admin
 - Username: `admin`
-- Password: `admin123`
+- Password: `123`
 
 ### Nhân viên
-- Username: `nhanvien1`
-- Password: `admin123`
+- Username: `tam`
+- Password: `123`
 
 ### User
-- Username: `user1`
-- Password: `admin123`
+- Username: `tam2`
+- Password: `123`
 
 ## Cấu trúc thư mục
 
