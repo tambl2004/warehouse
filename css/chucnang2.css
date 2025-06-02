@@ -1,0 +1,868 @@
+/* Bổ sung vào chucnang.css */
+
+/* Style cho danh mục đa cấp */
+.form-group select option {
+    padding-left: 10px;
+}
+
+.form-group select option[data-level="1"] {
+    padding-left: 30px;
+}
+
+/* Style cho bảng sản phẩm */
+.data-table img {
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.data-table img:hover {
+    transform: scale(1.5);
+}
+
+/* Style cho badge tồn kho */
+.badge.bg-low-stock {
+    background-color: #f6c23e !important;
+    color: #fff;
+}
+
+.badge.bg-normal-stock {
+    background-color: #1cc88a !important;
+    color: #fff;
+}
+
+/* Style cho modal lớn hơn */
+.modal-lg .modal-content {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+/* Style cho preview hình ảnh */
+.image-preview-container {
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-preview {
+    max-height: 120px;
+}
+
+/* Style cho thông báo lỗi trong form */
+.form-error {
+    color: #e74a3b;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: none;
+}
+
+/* Style cho trạng thái sản phẩm gần hết hạn */
+.table-sm .badge.bg-danger {
+    background-color: #e74a3b !important;
+    color: #fff;
+}
+
+.table-sm .badge.bg-warning {
+    background-color: #f6c23e !important;
+    color: #fff;
+}
+
+/* CSS mới cho quản lý sản phẩm */
+
+/* Thống kê cards */
+.stats-card {
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.stats-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.stats-card .card-body {
+    padding: 1.5rem;
+}
+
+.stats-card h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stats-card small {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* Product image styling */
+.product-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.product-image:hover {
+    transform: scale(2);
+    z-index: 1000;
+    position: relative;
+}
+
+.product-image-placeholder {
+    width: 40px;
+    height: 40px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+}
+
+/* Badge styles cho trạng thái */
+.badge-stock-high {
+    background-color: #28a745 !important;
+    color: white;
+}
+
+.badge-stock-medium {
+    background-color: #ffc107 !important;
+    color: #212529;
+}
+
+.badge-stock-low {
+    background-color: #dc3545 !important;
+    color: white;
+}
+
+.badge-stock-out {
+    background-color: #6c757d !important;
+    color: white;
+}
+
+/* Expiry date badges */
+.badge-expiry-good {
+    background-color: #e9ecef !important;
+    color: #495057;
+}
+
+.badge-expiry-warning {
+    background-color: #fff3cd !important;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.badge-expiry-danger {
+    background-color: #f8d7da !important;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Search and filter section */
+.search-filter-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.search-filter-section .form-control,
+.search-filter-section .form-select {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+}
+
+.search-filter-section .btn {
+    border-radius: 8px;
+}
+
+/* Alert sections for warnings */
+.alert-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #dee2e6;
+}
+
+.alert-section h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.alert-section .list-group-item {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #dee2e6;
+    padding: 12px 0;
+}
+
+.alert-section .list-group-item:last-child {
+    border-bottom: none;
+}
+
+.alert-section .list-group-item:hover {
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin: 0 -15px;
+}
+
+/* Product modal enhancements */
+.product-modal .modal-content {
+    border: none;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.product-modal .modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px 15px 0 0;
+}
+
+.product-modal .modal-header .modal-title {
+    color: white;
+    font-weight: 600;
+}
+
+.product-modal .modal-header .modal-close {
+    color: white;
+    opacity: 0.8;
+}
+
+.product-modal .modal-header .modal-close:hover {
+    opacity: 1;
+}
+
+/* Form enhancements */
+.form-group label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+.form-group .text-danger {
+    color: #dc3545 !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Image preview enhancements */
+.image-preview-container {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 2px dashed #ced4da;
+    transition: all 0.3s ease;
+}
+
+.image-preview-container:hover {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #f0f2ff 0%, #e8ebff 100%);
+}
+
+.image-preview-container i {
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+
+.image-preview-container:hover i {
+    color: #667eea;
+    transform: scale(1.1);
+}
+
+/* Animation cho loading */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.loading {
+    animation: pulse 1.5s infinite;
+}
+
+/* Button group enhancements */
+.btn-group-sm .btn {
+    border-radius: 6px;
+    margin-right: 2px;
+    transition: all 0.2s ease;
+}
+
+.btn-group-sm .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Pagination styling */
+.pagination .page-link {
+    border-radius: 8px;
+    margin: 0 2px;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    transition: all 0.2s ease;
+}
+
+.pagination .page-link:hover {
+    background-color: #667eea;
+    border-color: #667eea;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+/* Export button styling */
+.btn-export {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-export:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+    color: white;
+}
+
+/* Table hover effects */
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.002);
+    transition: all 0.2s ease;
+}
+
+/* Scrollbar styling */
+.table-responsive::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Mobile responsive enhancements */
+@media (max-width: 768px) {
+    .stats-card {
+        margin-bottom: 15px;
+    }
+    
+    .stats-card h3 {
+        font-size: 1.5rem;
+    }
+    
+    .search-filter-section {
+        padding: 15px;
+    }
+    
+    .search-filter-section .row > div {
+        margin-bottom: 10px;
+    }
+    
+    .product-modal .modal-content {
+        margin: 10px;
+        width: calc(100% - 20px);
+    }
+    
+    .btn-group-sm {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .btn-group-sm .btn {
+        margin-bottom: 5px;
+        margin-right: 0;
+    }
+}
+
+/* Dark mode support (tùy chọn) */
+@media (prefers-color-scheme: dark) {
+    .function-container {
+        background: #2c3e50;
+        color: #ecf0f1;
+    }
+    
+    .data-table th {
+        background-color: #34495e;
+        color: #ecf0f1;
+    }
+    
+    .form-control {
+        background-color: #34495e;
+        border-color: #4a5a6a;
+        color: #ecf0f1;
+    }
+    
+    .modal-content {
+        background-color: #2c3e50;
+        color: #ecf0f1;
+    }
+}
+
+/* CSS cho quản lý kho */
+
+/* Header quản lý kho */
+.warehouse-header {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.warehouse-header .page-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+}
+
+/* Sơ đồ kho trực quan */
+.warehouse-map {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    padding: 30px;
+    min-height: 500px;
+    overflow-x: auto;
+}
+
+.warehouse-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+    min-width: 100%;
+}
+
+.warehouse-area {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    min-width: 300px;
+    flex: 1;
+}
+
+.warehouse-area:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.area-title {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #495057;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.shelves-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.shelf-item {
+    background: linear-gradient(135deg, #e9ecef 0%, #f8f9fa 100%);
+    border: 2px solid #dee2e6;
+    border-radius: 12px;
+    padding: 15px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.shelf-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shelf-item.low {
+    background: linear-gradient(135deg, #d4f8e8 0%, #e8f5e9 100%);
+    border-color: #28a745;
+    color: #155724;
+}
+
+.shelf-item.medium {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border-color: #ffc107;
+    color: #856404;
+}
+
+.shelf-item.high {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border-color: #dc3545;
+    color: #721c24;
+}
+
+.shelf-code {
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.shelf-utilization {
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Hiệu ứng xung quanh kệ có mức sử dụng cao */
+.shelf-item.high::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #ff6b6b, #ffa500, #ff6b6b);
+    border-radius: 14px;
+    z-index: -1;
+    animation: alertPulse 2s infinite;
+}
+
+@keyframes alertPulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+/* Cards thống kê có gradient và hiệu ứng */
+.stats-card.bg-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.stats-card.bg-success {
+    background: linear-gradient(135deg, #56cc9d 0%, #6bb6ff 100%) !important;
+}
+
+.stats-card.bg-info {
+    background: linear-gradient(135deg, #3dd5f3 0%, #3b82f6 100%) !important;
+}
+
+.stats-card.bg-warning {
+    background: linear-gradient(135deg, #ff9a56 0%, #ffeaa7 100%) !important;
+}
+
+/* Progress bars với hiệu ứng */
+.progress {
+    background-color: #e9ecef;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, rgba(255,255,255,0.2) 0%, transparent 50%, rgba(255,255,255,0.2) 100%);
+    background-size: 30px 100%;
+    animation: progressShine 2s infinite;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+@keyframes progressShine {
+    0% { background-position: -30px 0; }
+    100% { background-position: 100% 0; }
+}
+
+/* Tabs với hiệu ứng đẹp */
+.nav-tabs {
+    border-bottom: 2px solid #dee2e6;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 10px 10px 0 0;
+    padding: 10px 20px 0;
+}
+
+.nav-tabs .nav-link {
+    background: transparent;
+    border: none;
+    border-radius: 10px 10px 0 0;
+    padding: 12px 20px;
+    margin-right: 5px;
+    color: #6c757d;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-tabs .nav-link::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-tabs .nav-link:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+}
+
+.nav-tabs .nav-link.active {
+    background: white;
+    color: #667eea;
+    box-shadow: 0 -3px 10px rgba(0,0,0,0.1);
+}
+
+.nav-tabs .nav-link.active::before {
+    width: 80%;
+}
+
+/* Tab content styling */
+.tab-content {
+    background: white;
+    border-radius: 0 0 15px 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    padding: 30px;
+}
+
+/* Biểu đồ container */
+#warehouseUtilizationChart {
+    border-radius: 10px;
+    background: white;
+}
+
+/* Cảnh báo sức chứa */
+#capacityAlerts .alert {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 10px;
+}
+
+#capacityAlerts .alert-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    color: #856404;
+    border-left: 4px solid #ffc107;
+}
+
+/* Tables trong warehouse */
+.warehouse-management .table {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.warehouse-management .table thead th {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    color: #495057;
+}
+
+/* Buttons với hiệu ứng */
+.warehouse-management .btn {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+}
+
+.warehouse-management .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.warehouse-management .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.warehouse-management .btn-success {
+    background: linear-gradient(135deg, #56cc9d 0%, #6bb6ff 100%);
+    border: none;
+}
+
+.warehouse-management .btn-outline-primary:hover,
+.warehouse-management .btn-outline-info:hover,
+.warehouse-management .btn-outline-danger:hover {
+    transform: translateY(-1px);
+}
+
+/* Modal enhancements */
+.warehouse-management .modal-content {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+.warehouse-management .modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px 15px 0 0;
+    border-bottom: none;
+}
+
+.warehouse-management .modal-title {
+    font-weight: 700;
+}
+
+.warehouse-management .btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+.warehouse-management .btn-close:hover {
+    opacity: 1;
+}
+
+/* Form controls */
+.warehouse-management .form-control,
+.warehouse-management .form-select {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+}
+
+.warehouse-management .form-control:focus,
+.warehouse-management .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    transform: translateY(-1px);
+}
+
+/* Filters */
+.warehouse-management .row.mb-3 {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 25px !important;
+}
+
+/* Loading animation */
+.warehouse-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    flex-direction: column;
+}
+
+.warehouse-loading .spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive cho warehouse map */
+@media (max-width: 992px) {
+    .warehouse-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .warehouse-area {
+        max-width: 500px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .warehouse-header .page-title {
+        font-size: 2rem;
+    }
+    
+    .warehouse-map {
+        padding: 20px;
+    }
+    
+    .shelves-grid {
+        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+        gap: 10px;
+    }
+    
+    .shelf-item {
+        padding: 10px 5px;
+        min-height: 60px;
+    }
+    
+    .shelf-code {
+        font-size: 0.75rem;
+    }
+    
+    .shelf-utilization {
+        font-size: 0.7rem;
+    }
+}
+
+/* Accessibility enhancements */
+.shelf-item:focus {
+    outline: 3px solid #667eea;
+    outline-offset: 2px;
+}
+
+.warehouse-management .btn:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+    .warehouse-management .btn,
+    .warehouse-management .modal,
+    .warehouse-management .nav-tabs {
+        display: none !important;
+    }
+    
+    .warehouse-map {
+        background: white !important;
+        box-shadow: none !important;
+    }
+}

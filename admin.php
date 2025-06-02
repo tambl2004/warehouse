@@ -17,6 +17,7 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/chucnang.css">
+    <link rel="stylesheet" href="css/chucnang2.css">
 </head>
 <body>
     <!-- Sidebar -->
