@@ -81,7 +81,7 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
                 <div class="nav-item">
                     <a href="?option=nhapkho" class="nav-link <?php echo $option == 'nhapkho' ? 'active' : ''; ?>" onclick="toggleDropdown(event, 'nhapxuatDropdown')">
                         <img src="gif/nhapxuatkho.gif" alt="Icon" class="nav-icon">
-                        Nhập / xuất kho
+                        Chức năng kho
                         <i class="dropdown-toggle ms-auto" id="nhapxuatToggle" style="font-size: 20px;"></i>
                     </a>
                 </div>
