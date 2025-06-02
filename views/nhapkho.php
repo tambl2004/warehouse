@@ -37,335 +37,335 @@ $stmt = $pdo->prepare("
 $stmt->execute();
 $stats = $stmt->fetch();
 ?>
-
-<div class="import-management">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="page-title">
-            <i class="fas fa-truck-loading me-2"></i>
-            Quản lý nhập kho
-        </h2>
-        <div class="d-flex gap-2">
-            <button class="btn btn-success" onclick="exportToExcel()">
-                <i class="fas fa-file-excel me-2"></i>
-                Xuất Excel
-            </button>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addImportModal">
-                <i class="fas fa-plus me-2"></i>
-                Tạo phiếu nhập
-            </button>
-        </div>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card stats-card bg-primary text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h5 class="card-title">Phiếu nhập hôm nay</h5>
-                            <h3 class="mb-0"><?= number_format($stats['today_imports']) ?></h3>
-                        </div>
-                        <div class="stats-icon">
-                            <i class="fas fa-file-import fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card stats-card bg-success text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h5 class="card-title">Tổng giá trị hôm nay</h5>
-                            <h3 class="mb-0"><?= number_format($stats['today_value']) ?>đ</h3>
-                        </div>
-                        <div class="stats-icon">
-                            <i class="fas fa-dollar-sign fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card stats-card bg-warning text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h5 class="card-title">Chờ duyệt</h5>
-                            <h3 class="mb-0"><?= number_format($stats['pending_imports']) ?></h3>
-                        </div>
-                        <div class="stats-icon">
-                            <i class="fas fa-clock fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card stats-card bg-info text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h5 class="card-title">Tổng phiếu nhập</h5>
-                            <h3 class="mb-0"><?= number_format($stats['total_imports']) ?></h3>
-                        </div>
-                        <div class="stats-icon">
-                            <i class="fas fa-boxes fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Filters -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <label class="form-label">Tìm kiếm</label>
-                    <input type="text" class="form-control" id="searchInput" placeholder="Mã phiếu, nhà cung cấp...">
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Trạng thái</label>
-                    <select class="form-select" id="statusFilter">
-                        <option value="">Tất cả</option>
-                        <option value="pending">Chờ duyệt</option>
-                        <option value="approved">Đã duyệt</option>
-                        <option value="rejected">Từ chối</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Nhà cung cấp</label>
-                    <select class="form-select" id="supplierFilter">
-                        <option value="">Tất cả</option>
-                        <?php foreach ($suppliers as $supplier): ?>
-                            <option value="<?= $supplier['supplier_id'] ?>"><?= $supplier['supplier_name'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Từ ngày</label>
-                    <input type="date" class="form-control" id="fromDate">
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Đến ngày</label>
-                    <input type="date" class="form-control" id="toDate">
-                </div>
-                <div class="col-md-1 d-flex align-items-end">
-                    <button class="btn btn-outline-primary w-100" onclick="loadImportOrders()">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Import Orders Table -->
-    <div class="card">
-        <div class="card-header">
-            <h5 class="mb-0">Danh sách phiếu nhập</h5>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover" id="importOrdersTable">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Mã phiếu</th>
-                            <th>Nhà cung cấp</th>
-                            <th>Ngày nhập</th>
-                            <th>Tổng giá trị</th>
-                            <th>Trạng thái</th>
-                            <th>Người tạo</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="7" class="text-center">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Đang tải...</span>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Pagination -->
-            <nav aria-label="Phân trang" class="mt-3">
-                <ul class="pagination justify-content-center" id="pagination">
-                </ul>
-            </nav>
-        </div>
-    </div>
-</div>
-
-<!-- Add Import Modal -->
-<div class="modal fade" id="addImportModal" tabindex="-1">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Tạo phiếu nhập kho</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form id="addImportForm">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Mã phiếu nhập *</label>
-                                <input type="text" class="form-control" name="import_code" id="import_code" readonly>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Nhà cung cấp *</label>
-                                <select class="form-select" name="supplier_id" id="supplier_id" required>
-                                    <option value="">Chọn nhà cung cấp</option>
-                                    <?php foreach ($suppliers as $supplier): ?>
-                                        <option value="<?= $supplier['supplier_id'] ?>"><?= $supplier['supplier_name'] ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="mb-3">
-                                <label class="form-label">Ghi chú</label>
-                                <textarea class="form-control" name="notes" rows="2" placeholder="Ghi chú về phiếu nhập..."></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <hr>
-                    
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <label class="form-label mb-0">Sản phẩm nhập kho</label>
-                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addProductRow()">
-                                <i class="fas fa-plus me-1"></i>
-                                Thêm sản phẩm
-                            </button>
-                        </div>
-                        
-                        <div id="productList">
-                            <div class="product-item border rounded p-3 mb-3" data-index="0">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <label class="form-label">Sản phẩm *</label>
-                                        <select class="form-select product-select" name="products[0][product_id]" required onchange="updateProductInfo(this, 0)">
-                                            <option value="">Chọn sản phẩm</option>
-                                            <?php foreach ($products as $product): ?>
-                                                <option value="<?= $product['product_id'] ?>" 
-                                                        data-sku="<?= $product['sku'] ?>"
-                                                        data-name="<?= $product['product_name'] ?>"
-                                                        data-price="<?= $product['unit_price'] ?>">
-                                                    <?= $product['product_name'] ?> (<?= $product['sku'] ?>)
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label class="form-label">Số lượng *</label>
-                                        <input type="number" class="form-control quantity-input" name="products[0][quantity]" min="1" required onchange="calculateRowTotal(0)">
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label class="form-label">Đơn giá *</label>
-                                        <input type="number" class="form-control price-input" name="products[0][unit_price]" min="0" step="0.01" required onchange="calculateRowTotal(0)">
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label class="form-label">Lô hàng</label>
-                                        <input type="text" class="form-control" name="products[0][lot_number]" placeholder="LOT001">
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label class="form-label">Hạn sử dụng</label>
-                                        <input type="date" class="form-control" name="products[0][expiry_date]">
-                                    </div>
-                                    <div class="col-md-1 d-flex align-items-end">
-                                        <button type="button" class="btn btn-danger btn-sm w-100" onclick="removeProductRow(this)">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row mt-2">
-                                    <div class="col-md-4">
-                                        <label class="form-label">Kệ lưu trữ</label>
-                                        <select class="form-select" name="products[0][shelf_id]">
-                                            <option value="">Chọn kệ</option>
-                                            <?php foreach ($shelves as $shelf): ?>
-                                                <option value="<?= $shelf['shelf_id'] ?>">
-                                                    <?= $shelf['shelf_code'] ?> - <?= $shelf['area_name'] ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Thành tiền</label>
-                                        <input type="text" class="form-control total-amount" readonly>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 offset-md-6">
-                            <div class="card bg-light">
-                                <div class="card-body">
-                                    <h6>Tổng cộng</h6>
-                                    <div class="d-flex justify-content-between">
-                                        <span>Tổng số lượng:</span>
-                                        <span id="totalQuantity">0</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between">
-                                        <span>Tổng tiền:</span>
-                                        <strong id="totalAmount">0đ</strong>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-2"></i>
-                        Tạo phiếu nhập
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Import Detail Modal -->
-<div class="modal fade" id="importDetailModal" tabindex="-1">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Chi tiết phiếu nhập</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body" id="importDetailContent">
-                <!-- Content sẽ được load bằng AJAX -->
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                <button type="button" class="btn btn-primary" onclick="exportToPDF()">
-                    <i class="fas fa-file-pdf me-2"></i>
-                    Xuất PDF
+<div class="function-container">
+    <div class="import-management">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="page-title">
+                <i class="fas fa-truck-loading me-2"></i>
+                Quản lý nhập kho
+            </h2>
+            <div class="d-flex gap-2">
+                <button class="btn btn-success" onclick="exportToExcel()">
+                    <i class="fas fa-file-excel me-2"></i>
+                    Xuất Excel
+                </button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addImportModal">
+                    <i class="fas fa-plus me-2"></i>
+                    Tạo phiếu nhập
                 </button>
             </div>
         </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card stats-card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="card-title">Phiếu nhập hôm nay</h5>
+                                <h3 class="mb-0"><?= number_format($stats['today_imports']) ?></h3>
+                            </div>
+                            <div class="stats-icon">
+                                <i class="fas fa-file-import fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="card-title">Tổng giá trị hôm nay</h5>
+                                <h3 class="mb-0"><?= number_format($stats['today_value']) ?>đ</h3>
+                            </div>
+                            <div class="stats-icon">
+                                <i class="fas fa-dollar-sign fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card bg-warning text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="card-title">Chờ duyệt</h5>
+                                <h3 class="mb-0"><?= number_format($stats['pending_imports']) ?></h3>
+                            </div>
+                            <div class="stats-icon">
+                                <i class="fas fa-clock fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card bg-info text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="card-title">Tổng phiếu nhập</h5>
+                                <h3 class="mb-0"><?= number_format($stats['total_imports']) ?></h3>
+                            </div>
+                            <div class="stats-icon">
+                                <i class="fas fa-boxes fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Tìm kiếm</label>
+                        <input type="text" class="form-control" id="searchInput" placeholder="Mã phiếu, nhà cung cấp...">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Trạng thái</label>
+                        <select class="form-select" id="statusFilter">
+                            <option value="">Tất cả</option>
+                            <option value="pending">Chờ duyệt</option>
+                            <option value="approved">Đã duyệt</option>
+                            <option value="rejected">Từ chối</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Nhà cung cấp</label>
+                        <select class="form-select" id="supplierFilter">
+                            <option value="">Tất cả</option>
+                            <?php foreach ($suppliers as $supplier): ?>
+                                <option value="<?= $supplier['supplier_id'] ?>"><?= $supplier['supplier_name'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Từ ngày</label>
+                        <input type="date" class="form-control" id="fromDate">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Đến ngày</label>
+                        <input type="date" class="form-control" id="toDate">
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button class="btn btn-outline-primary w-100" onclick="loadImportOrders()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import Orders Table -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Danh sách phiếu nhập</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="importOrdersTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Mã phiếu</th>
+                                <th>Nhà cung cấp</th>
+                                <th>Ngày nhập</th>
+                                <th>Tổng giá trị</th>
+                                <th>Trạng thái</th>
+                                <th>Người tạo</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="7" class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Đang tải...</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <nav aria-label="Phân trang" class="mt-3">
+                    <ul class="pagination justify-content-center" id="pagination">
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Import Modal -->
+    <div class="modal fade" id="addImportModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tạo phiếu nhập kho</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="addImportForm">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Mã phiếu nhập *</label>
+                                    <input type="text" class="form-control" name="import_code" id="import_code" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Nhà cung cấp *</label>
+                                    <select class="form-select" name="supplier_id" id="supplier_id" required>
+                                        <option value="">Chọn nhà cung cấp</option>
+                                        <?php foreach ($suppliers as $supplier): ?>
+                                            <option value="<?= $supplier['supplier_id'] ?>"><?= $supplier['supplier_name'] ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Ghi chú</label>
+                                    <textarea class="form-control" name="notes" rows="2" placeholder="Ghi chú về phiếu nhập..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <label class="form-label mb-0">Sản phẩm nhập kho</label>
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="addProductRow()">
+                                    <i class="fas fa-plus me-1"></i>
+                                    Thêm sản phẩm
+                                </button>
+                            </div>
+                            
+                            <div id="productList">
+                                <div class="product-item border rounded p-3 mb-3" data-index="0">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <label class="form-label">Sản phẩm *</label>
+                                            <select class="form-select product-select" name="products[0][product_id]" required onchange="updateProductInfo(this, 0)">
+                                                <option value="">Chọn sản phẩm</option>
+                                                <?php foreach ($products as $product): ?>
+                                                    <option value="<?= $product['product_id'] ?>" 
+                                                            data-sku="<?= $product['sku'] ?>"
+                                                            data-name="<?= $product['product_name'] ?>"
+                                                            data-price="<?= $product['unit_price'] ?>">
+                                                        <?= $product['product_name'] ?> (<?= $product['sku'] ?>)
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">Số lượng *</label>
+                                            <input type="number" class="form-control quantity-input" name="products[0][quantity]" min="1" required onchange="calculateRowTotal(0)">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">Đơn giá *</label>
+                                            <input type="number" class="form-control price-input" name="products[0][unit_price]" min="0" step="0.01" required onchange="calculateRowTotal(0)">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">Lô hàng</label>
+                                            <input type="text" class="form-control" name="products[0][lot_number]" placeholder="LOT001">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">Hạn sử dụng</label>
+                                            <input type="date" class="form-control" name="products[0][expiry_date]">
+                                        </div>
+                                        <div class="col-md-1 d-flex align-items-end">
+                                            <button type="button" class="btn btn-danger btn-sm w-100" onclick="removeProductRow(this)">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Kệ lưu trữ</label>
+                                            <select class="form-select" name="products[0][shelf_id]">
+                                                <option value="">Chọn kệ</option>
+                                                <?php foreach ($shelves as $shelf): ?>
+                                                    <option value="<?= $shelf['shelf_id'] ?>">
+                                                        <?= $shelf['shelf_code'] ?> - <?= $shelf['area_name'] ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Thành tiền</label>
+                                            <input type="text" class="form-control total-amount" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 offset-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6>Tổng cộng</h6>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Tổng số lượng:</span>
+                                            <span id="totalQuantity">0</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Tổng tiền:</span>
+                                            <strong id="totalAmount">0đ</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>
+                            Tạo phiếu nhập
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Detail Modal -->
+    <div class="modal fade" id="importDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chi tiết phiếu nhập</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="importDetailContent">
+                    <!-- Content sẽ được load bằng AJAX -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" onclick="exportToPDF()">
+                        <i class="fas fa-file-pdf me-2"></i>
+                        Xuất PDF
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-
 <script>
 let productIndex = 1;
 let currentImportId = null;

@@ -3,7 +3,6 @@
 /* ========================================= */
 
 .import-management {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     min-height: 100vh;
     padding: 20px;
 }
@@ -639,4 +638,555 @@
     color: #28a745;
     font-size: 0.875rem;
     margin-top: 5px;
+}
+
+/* ========================================= */
+/* CSS cho Module Quản Lý Xuất Kho */
+/* ========================================= */
+
+.export-management {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Export Statistics Cards */
+.export-stats-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    padding: 25px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.export-stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-bg, linear-gradient(90deg, #667eea, #764ba2));
+}
+
+.export-stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+.export-stats-card.bg-primary {
+    --gradient-bg: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.export-stats-card.bg-warning {
+    --gradient-bg: linear-gradient(90deg, #ff9a56, #ffeaa7);
+}
+
+.export-stats-card.bg-success {
+    --gradient-bg: linear-gradient(90deg, #56cc9d, #6bb6ff);
+}
+
+.export-stats-card.bg-info {
+    --gradient-bg: linear-gradient(90deg, #3dd5f3, #3b82f6);
+}
+
+/* Export table enhancements */
+.export-table-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.export-table-container .table {
+    margin-bottom: 0;
+}
+
+.export-table-container .table thead th {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    color: #495057;
+    padding: 15px;
+}
+
+.export-table-container .table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.export-table-container .table tbody tr:hover {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    transform: scale(1.002);
+}
+
+.export-table-container .table tbody td {
+    padding: 15px;
+    vertical-align: middle;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* Export code styling */
+.export-code {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #495057;
+    background: #f8f9fa;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border-left: 4px solid #667eea;
+}
+
+/* Status badges với animation */
+.status-badge {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    animation: pulse 2s infinite;
+}
+
+.status-badge.bg-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%) !important;
+    color: #856404;
+    border: 1px solid #ffc107;
+}
+
+.status-badge.bg-success {
+    background: linear-gradient(135deg, #d4f8e8 0%, #a8e6cf 100%) !important;
+    color: #155724;
+    border: 1px solid #28a745;
+}
+
+.status-badge.bg-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%) !important;
+    color: #721c24;
+    border: 1px solid #dc3545;
+}
+
+/* Export modal enhancements */
+.export-modal .modal-content {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+}
+
+.export-modal .modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 20px 20px 0 0;
+    padding: 25px 30px;
+}
+
+.export-modal .modal-body {
+    padding: 30px;
+}
+
+.export-modal .modal-footer {
+    padding: 20px 30px 30px;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* Product selection rows */
+.product-item {
+    background: #fafafa;
+    border: 2px solid #e9ecef !important;
+    border-radius: 15px !important;
+    padding: 20px !important;
+    margin-bottom: 20px !important;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.product-item:hover {
+    border-color: #667eea !important;
+    background: #f0f2ff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.15);
+}
+
+.product-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 15px 15px 0 0;
+}
+
+.product-item .form-control,
+.product-item .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.product-item .form-control:focus,
+.product-item .form-select:focus {
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    transform: translateY(-1px);
+}
+
+/* Search and filter section */
+.export-search-section {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-bottom: 25px;
+}
+
+.export-search-section .form-control,
+.export-search-section .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+    background: #fafafa;
+}
+
+.export-search-section .form-control:focus,
+.export-search-section .form-select:focus {
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Button enhancements */
+.export-management .btn {
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+    padding: 10px 20px;
+}
+
+.export-management .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.export-management .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.export-management .btn-success {
+    background: linear-gradient(135deg, #56cc9d 0%, #6bb6ff 100%);
+    border: none;
+}
+
+.export-management .btn-outline-primary:hover,
+.export-management .btn-outline-success:hover,
+.export-management .btn-outline-danger:hover,
+.export-management .btn-outline-warning:hover,
+.export-management .btn-outline-info:hover {
+    transform: translateY(-1px);
+}
+
+/* Add product button animation */
+.btn-add-product {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border: none;
+    color: white;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-add-product:hover {
+    background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+    color: white;
+}
+
+/* Remove product button */
+.btn-remove-product {
+    background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+    border: none;
+    color: white;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-remove-product:hover {
+    background: linear-gradient(135deg, #e74c3c 0%, #dc3545 100%);
+    transform: scale(1.1);
+    color: white;
+}
+
+/* Export detail modal content */
+.export-detail-content {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.export-detail-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.export-detail-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.export-detail-content::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.export-detail-content::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.export-detail-content .table {
+    font-size: 0.9rem;
+}
+
+.export-detail-content .table thead th {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    color: #495057;
+}
+
+/* Stock validation styling */
+.stock-error {
+    color: #dc3545 !important;
+    font-size: 0.875rem;
+    margin-top: 5px;
+}
+
+.quantity-input.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.product-info {
+    background: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border-left: 3px solid #667eea;
+}
+
+/* Loading animation */
+.export-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    flex-direction: column;
+}
+
+.export-loading .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.3em;
+    color: #667eea;
+}
+
+.export-loading-text {
+    margin-top: 20px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Alert enhancements */
+.export-management .alert {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    font-weight: 500;
+}
+
+.export-management .alert-success {
+    background: linear-gradient(135deg, #d4f8e8 0%, #a8e6cf 100%);
+    color: #155724;
+    border-left: 4px solid #28a745;
+}
+
+.export-management .alert-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+}
+
+.export-management .alert-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    color: #856404;
+    border-left: 4px solid #ffc107;
+}
+
+.export-management .alert-info {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    color: #0c5460;
+    border-left: 4px solid #17a2b8;
+}
+
+/* Pagination styling */
+.export-management .pagination .page-link {
+    border-radius: 10px;
+    margin: 0 3px;
+    border: 2px solid #e9ecef;
+    color: #495057;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.export-management .pagination .page-link:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.export-management .pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Empty state styling */
+.export-management .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+}
+
+.export-management .empty-state i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+    color: #667eea;
+}
+
+.export-management .empty-state p {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .export-management {
+        padding: 15px;
+    }
+    
+    .export-stats-card {
+        margin-bottom: 15px;
+    }
+    
+    .export-stats-card h3 {
+        font-size: 1.5rem;
+    }
+    
+    .export-search-section {
+        padding: 20px;
+    }
+    
+    .export-search-section .row > div {
+        margin-bottom: 15px;
+    }
+    
+    .product-item {
+        padding: 15px !important;
+    }
+    
+    .product-item .row > div {
+        margin-bottom: 10px;
+    }
+    
+    .export-modal .modal-content {
+        margin: 10px;
+        width: calc(100% - 20px);
+    }
+    
+    .export-modal .modal-header,
+    .export-modal .modal-body,
+    .export-modal .modal-footer {
+        padding: 20px;
+    }
+    
+    .btn-group .btn {
+        margin-bottom: 5px;
+    }
+    
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+}
+
+/* Print styles */
+@media print {
+    .export-management .btn,
+    .export-management .pagination,
+    .export-management .card-header,
+    .export-management .modal {
+        display: none !important;
+    }
+    
+    .export-management .card {
+        box-shadow: none !important;
+        border: 1px solid #000 !important;
+    }
+    
+    .export-detail-content {
+        max-height: none !important;
+        overflow: visible !important;
+    }
+}
+
+/* Accessibility enhancements */
+.export-management .btn:focus,
+.export-management .form-control:focus,
+.export-management .form-select:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .export-management {
+        background: white;
+    }
+    
+    .export-stats-card {
+        border: 2px solid #000;
+    }
+    
+    .form-control,
+    .form-select {
+        border: 2px solid #000;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .export-management *,
+    .export-management *::before,
+    .export-management *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }

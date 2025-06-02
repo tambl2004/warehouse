@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: localhost
--- Thời gian đã tạo: Th6 02, 2025 lúc 12:20 PM
+-- Thời gian đã tạo: Th6 02, 2025 lúc 03:52 PM
 -- Phiên bản máy phục vụ: 5.7.24
 -- Phiên bản PHP: 8.3.1
 
@@ -176,6 +176,29 @@ CREATE TABLE `import_orders` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Lưu thông tin phiếu nhập kho';
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc đóng vai cho view `import_orders_summary`
+-- (See below for the actual view)
+--
+CREATE TABLE `import_orders_summary` (
+`import_id` int(11)
+,`import_code` varchar(50)
+,`supplier_id` int(11)
+,`created_by` int(11)
+,`import_date` timestamp
+,`status` enum('pending','approved','rejected')
+,`created_at` timestamp
+,`updated_at` timestamp
+,`supplier_name` varchar(255)
+,`supplier_code` varchar(20)
+,`creator_name` varchar(100)
+,`total_items` bigint(21)
+,`total_value` decimal(42,2)
+,`total_quantity` decimal(32,0)
+);
 
 -- --------------------------------------------------------
 
@@ -972,7 +995,7 @@ ALTER TABLE `export_orders`
 -- AUTO_INCREMENT cho bảng `import_details`
 --
 ALTER TABLE `import_details`
-  MODIFY `import_detail_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `import_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT cho bảng `import_orders`
@@ -1087,6 +1110,15 @@ ALTER TABLE `user_logs`
 --
 ALTER TABLE `warehouse_areas`
   MODIFY `area_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc cho view `import_orders_summary`
+--
+DROP TABLE IF EXISTS `import_orders_summary`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `import_orders_summary`  AS SELECT `io`.`import_id` AS `import_id`, `io`.`import_code` AS `import_code`, `io`.`supplier_id` AS `supplier_id`, `io`.`created_by` AS `created_by`, `io`.`import_date` AS `import_date`, `io`.`status` AS `status`, `io`.`created_at` AS `created_at`, `io`.`updated_at` AS `updated_at`, `s`.`supplier_name` AS `supplier_name`, `s`.`supplier_code` AS `supplier_code`, `u`.`full_name` AS `creator_name`, count(`id`.`import_detail_id`) AS `total_items`, coalesce(sum((`id`.`quantity` * `id`.`unit_price`)),0) AS `total_value`, coalesce(sum(`id`.`quantity`),0) AS `total_quantity` FROM (((`import_orders` `io` left join `suppliers` `s` on((`io`.`supplier_id` = `s`.`supplier_id`))) left join `users` `u` on((`io`.`created_by` = `u`.`user_id`))) left join `import_details` `id` on((`io`.`import_id` = `id`.`import_id`))) GROUP BY `io`.`import_id` ;
 
 --
 -- Ràng buộc đối với các bảng kết xuất

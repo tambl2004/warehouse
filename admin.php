@@ -103,12 +103,7 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
                             Xuất kho
                         </a>
                     </div>
-                    <div class="nav-item">
-                        <a href="?option=chuyenkho" class="nav-link <?php echo $option == 'chuyenkho' ? 'active' : ''; ?>">
-                            <img src="gif/dieuchuyenkho.gif" alt="Icon" class="nav-icon">
-                            Điều chuyển kho
-                        </a>
-                    </div>
+                  
                     <div class="nav-item">
                         <a href="?option=kiemke" class="nav-link <?php echo $option == 'kiemke' ? 'active' : ''; ?>">
                             <img src="gif/kiemke.gif" alt="Icon" class="nav-icon">
@@ -228,9 +223,7 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
                     case 'xuatkho':
                         include 'views/xuatkho.php';
                         break;
-                    case 'chuyenkho':
-                        include 'views/chuyenkho.php';
-                        break;
+                    
                     case 'kiemke':
                         include 'views/kiemke.php';
                         break;
