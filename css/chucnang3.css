@@ -1,0 +1,642 @@
+/* ========================================= */
+/* CSS cho Module Quản Lý Nhập Kho */
+/* ========================================= */
+
+.import-management {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Import Statistics Cards */
+.import-stats-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    padding: 25px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.import-stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-bg, linear-gradient(90deg, #667eea, #764ba2));
+}
+
+.import-stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+.import-stats-card.bg-primary {
+    --gradient-bg: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.import-stats-card.bg-success {
+    --gradient-bg: linear-gradient(90deg, #56cc9d, #6bb6ff);
+}
+
+.import-stats-card.bg-info {
+    --gradient-bg: linear-gradient(90deg, #3dd5f3, #3b82f6);
+}
+
+.import-stats-card.bg-warning {
+    --gradient-bg: linear-gradient(90deg, #ff9a56, #ffeaa7);
+}
+
+/* Import order table enhancements */
+.import-table-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.import-table-container .table {
+    margin-bottom: 0;
+}
+
+.import-table-container .table thead th {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    color: #495057;
+    padding: 15px;
+}
+
+.import-table-container .table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.import-table-container .table tbody tr:hover {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    transform: scale(1.002);
+}
+
+.import-table-container .table tbody td {
+    padding: 15px;
+    vertical-align: middle;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* Import code styling */
+.import-code {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #495057;
+    background: #f8f9fa;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border-left: 4px solid #667eea;
+}
+
+/* Status badges với animation */
+.status-badge {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    animation: pulse 2s infinite;
+}
+
+.status-badge.bg-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%) !important;
+    color: #856404;
+    border: 1px solid #ffc107;
+}
+
+.status-badge.bg-success {
+    background: linear-gradient(135deg, #d4f8e8 0%, #a8e6cf 100%) !important;
+    color: #155724;
+    border: 1px solid #28a745;
+}
+
+.status-badge.bg-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%) !important;
+    color: #721c24;
+    border: 1px solid #dc3545;
+}
+
+/* Import modal enhancements */
+.import-modal .modal-content {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+}
+
+.import-modal .modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 20px 20px 0 0;
+    padding: 25px 30px;
+}
+
+.import-modal .modal-body {
+    padding: 30px;
+}
+
+.import-modal .modal-footer {
+    padding: 20px 30px 30px;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* Product selection rows */
+.product-item {
+    background: #fafafa;
+    border: 2px solid #e9ecef !important;
+    border-radius: 15px !important;
+    padding: 20px !important;
+    margin-bottom: 20px !important;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.product-item:hover {
+    border-color: #667eea !important;
+    background: #f0f2ff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.15);
+}
+
+.product-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 15px 15px 0 0;
+}
+
+.product-item .form-control,
+.product-item .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.product-item .form-control:focus,
+.product-item .form-select:focus {
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    transform: translateY(-1px);
+}
+
+/* Total amount calculation card */
+.total-calculation-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.total-calculation-card h6 {
+    color: white;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.total-calculation-card .d-flex {
+    margin-bottom: 8px;
+}
+
+.total-calculation-card .d-flex:last-child {
+    margin-bottom: 0;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Search and filter section */
+.import-search-section {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-bottom: 25px;
+}
+
+.import-search-section .form-control,
+.import-search-section .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+    background: #fafafa;
+}
+
+.import-search-section .form-control:focus,
+.import-search-section .form-select:focus {
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Button enhancements */
+.import-management .btn {
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+    padding: 10px 20px;
+}
+
+.import-management .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.import-management .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.import-management .btn-success {
+    background: linear-gradient(135deg, #56cc9d 0%, #6bb6ff 100%);
+    border: none;
+}
+
+.import-management .btn-outline-primary:hover,
+.import-management .btn-outline-success:hover,
+.import-management .btn-outline-danger:hover,
+.import-management .btn-outline-warning:hover,
+.import-management .btn-outline-info:hover {
+    transform: translateY(-1px);
+}
+
+/* Add product button animation */
+.btn-add-product {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border: none;
+    color: white;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-add-product:hover {
+    background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+    color: white;
+}
+
+/* Remove product button */
+.btn-remove-product {
+    background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+    border: none;
+    color: white;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-remove-product:hover {
+    background: linear-gradient(135deg, #e74c3c 0%, #dc3545 100%);
+    transform: scale(1.1);
+    color: white;
+}
+
+/* Import detail modal content */
+.import-detail-content {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.import-detail-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.import-detail-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.import-detail-content::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.import-detail-content::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.import-detail-content .table {
+    font-size: 0.9rem;
+}
+
+.import-detail-content .table thead th {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    color: #495057;
+}
+
+/* Pagination styling */
+.pagination .page-link {
+    border-radius: 10px;
+    margin: 0 3px;
+    border: 2px solid #e9ecef;
+    color: #495057;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.pagination .page-link:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Empty state styling */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+    color: #667eea;
+}
+
+.empty-state p {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* Loading animation */
+.import-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    flex-direction: column;
+}
+
+.import-loading .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.3em;
+    color: #667eea;
+}
+
+.import-loading-text {
+    margin-top: 20px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Alert enhancements */
+.alert {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    font-weight: 500;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d4f8e8 0%, #a8e6cf 100%);
+    color: #155724;
+    border-left: 4px solid #28a745;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    color: #856404;
+    border-left: 4px solid #ffc107;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    color: #0c5460;
+    border-left: 4px solid #17a2b8;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .import-management {
+        padding: 15px;
+    }
+    
+    .import-stats-card {
+        margin-bottom: 15px;
+    }
+    
+    .import-stats-card h3 {
+        font-size: 1.5rem;
+    }
+    
+    .import-search-section {
+        padding: 20px;
+    }
+    
+    .import-search-section .row > div {
+        margin-bottom: 15px;
+    }
+    
+    .product-item {
+        padding: 15px !important;
+    }
+    
+    .product-item .row > div {
+        margin-bottom: 10px;
+    }
+    
+    .import-modal .modal-content {
+        margin: 10px;
+        width: calc(100% - 20px);
+    }
+    
+    .import-modal .modal-header,
+    .import-modal .modal-body,
+    .import-modal .modal-footer {
+        padding: 20px;
+    }
+    
+    .btn-group .btn {
+        margin-bottom: 5px;
+    }
+    
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+}
+
+/* Print styles */
+@media print {
+    .import-management .btn,
+    .import-management .pagination,
+    .import-management .card-header,
+    .import-management .modal {
+        display: none !important;
+    }
+    
+    .import-management .card {
+        box-shadow: none !important;
+        border: 1px solid #000 !important;
+    }
+    
+    .import-detail-content {
+        max-height: none !important;
+        overflow: visible !important;
+    }
+}
+
+/* Accessibility enhancements */
+.import-management .btn:focus,
+.import-management .form-control:focus,
+.import-management .form-select:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .import-management {
+        background: white;
+    }
+    
+    .import-stats-card {
+        border: 2px solid #000;
+    }
+    
+    .form-control,
+    .form-select {
+        border: 2px solid #000;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .import-management *,
+    .import-management *::before,
+    .import-management *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Additional styling cho các thành phần đặc biệt */
+
+/* Import code generator */
+.import-code-generator {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border: 2px solid #2196f3;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.import-code-generator .form-control {
+    background: white;
+    border: 2px solid #2196f3;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: #1976d2;
+}
+
+/* Supplier info card */
+.supplier-info-card {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    border: 2px solid #9c27b0;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+/* Product summary totals */
+.product-summary {
+    background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+    border: 2px solid #4caf50;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.product-summary h6 {
+    color: #2e7d32;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.product-summary .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(76, 175, 80, 0.2);
+}
+
+.product-summary .summary-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #1b5e20;
+}
+
+/* Form validation styling */
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-control.is-valid,
+.form-select.is-valid {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.invalid-feedback {
+    display: block;
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 5px;
+}
+
+.valid-feedback {
+    display: block;
+    color: #28a745;
+    font-size: 0.875rem;
+    margin-top: 5px;
+}

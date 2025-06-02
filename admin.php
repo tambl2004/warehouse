@@ -18,6 +18,7 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/chucnang.css">
     <link rel="stylesheet" href="css/chucnang2.css">
+    <link rel="stylesheet" href="css/chucnang3.css">
     <?php if ($option == 'kiemke') { ?>
         <link rel="stylesheet" href="css/kiemke.css">
     <?php } ?>
@@ -157,7 +158,7 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
         </nav>
     </div>
 
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <!-- Main Content -->
     <div class="main-content">
         <!-- Top Header -->
@@ -254,7 +255,7 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
     </div>
 
     <!-- jQuery Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> 
     
     <?php if ($option == 'rfid') { ?>
