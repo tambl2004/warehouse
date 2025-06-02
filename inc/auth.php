@@ -135,5 +135,19 @@ function logUserAction($userId, $actionType, $description) {
     
     $conn->query($sql);
 }
+function checkUserPermission(array $allowedRoles) {
+    if (!isLoggedIn()) {
+        throw new Exception("Yêu cầu đăng nhập để thực hiện hành động này.", 401); 
+    }
+    $currentUserRole = $_SESSION['role'] ?? null; 
+    if ($currentUserRole === null) {
+        error_log("Người dùng ID {$_SESSION['user_id']} đã đăng nhập nhưng không có vai trò trong session.");
+        throw new Exception("Không thể xác định vai trò người dùng.", 403); 
+    }
+    if (!in_array($currentUserRole, $allowedRoles)) {
+        throw new Exception("Bạn không có quyền truy cập chức năng này. Yêu cầu vai trò: " . implode(' hoặc ', $allowedRoles) . ". Vai trò hiện tại của bạn: {$currentUserRole}.", 403); // 403 Forbidden
+    }
+    return true; 
+}
 
 ?>

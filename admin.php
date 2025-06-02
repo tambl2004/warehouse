@@ -18,6 +18,9 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/chucnang.css">
     <link rel="stylesheet" href="css/chucnang2.css">
+    <?php if ($option == 'kiemke') { ?>
+        <link rel="stylesheet" href="css/kiemke.css">
+    <?php } ?>
 </head>
 <body>
     <!-- Sidebar -->

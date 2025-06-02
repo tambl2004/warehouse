@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: localhost
--- Thời gian đã tạo: Th6 02, 2025 lúc 07:06 AM
+-- Thời gian đã tạo: Th6 02, 2025 lúc 12:20 PM
 -- Phiên bản máy phục vụ: 5.7.24
 -- Phiên bản PHP: 8.3.1
 
@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `alerts` (
   `alert_id` int(11) NOT NULL,
-  `alert_type` enum('low_stock','expiry_soon','rfid_error','barcode_error','device_error') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `alert_type` enum('low_stock','expiry_soon','rfid_error','barcode_error','device_error','inventory_discrepancy') COLLATE utf8mb4_unicode_ci NOT NULL,
   `product_id` int(11) DEFAULT NULL,
   `device_id` int(11) DEFAULT NULL,
   `description` varchar(1000) CHARACTER SET utf8 DEFAULT NULL,
@@ -180,6 +180,25 @@ CREATE TABLE `import_orders` (
 -- --------------------------------------------------------
 
 --
+-- Cấu trúc bảng cho bảng `inventory_adjustments`
+--
+
+CREATE TABLE `inventory_adjustments` (
+  `adjustment_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `shelf_id` int(11) DEFAULT NULL,
+  `old_quantity` int(11) NOT NULL,
+  `new_quantity` int(11) NOT NULL,
+  `difference` int(11) NOT NULL,
+  `reason` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `adjust_type` enum('inventory_loss','inventory_gain','counting_error','system_error','damage','expired','other') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Lưu lịch sử điều chỉnh tồn kho';
+
+-- --------------------------------------------------------
+
+--
 -- Cấu trúc bảng cho bảng `inventory_checks`
 --
 
@@ -189,6 +208,7 @@ CREATE TABLE `inventory_checks` (
   `area_id` int(11) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `status` enum('pending','completed','failed') COLLATE utf8mb4_unicode_ci DEFAULT 'pending',
+  `notes` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Lưu thông tin lịch kiểm kê';
@@ -283,6 +303,22 @@ CREATE TABLE `product_locations` (
   `quantity` int(11) NOT NULL DEFAULT '0',
   `last_updated` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `product_locations`
+--
+
+INSERT INTO `product_locations` (`product_id`, `shelf_id`, `quantity`, `last_updated`) VALUES
+(1, 1, 20, '2025-06-02 14:17:42'),
+(2, 4, 15, '2025-06-02 14:17:42'),
+(3, 6, 100, '2025-06-02 14:17:42'),
+(4, 1, 30, '2025-06-02 14:17:42'),
+(5, 8, 50, '2025-06-02 14:17:42'),
+(6, 2, 40, '2025-06-02 14:17:42'),
+(7, 5, 5, '2025-06-02 14:17:42'),
+(8, 7, 80, '2025-06-02 14:17:42'),
+(9, 8, 3, '2025-06-02 14:17:42'),
+(10, 8, 8, '2025-06-02 14:17:42');
 
 -- --------------------------------------------------------
 
@@ -426,10 +462,21 @@ CREATE TABLE `shelf_product_history` (
   `product_id` int(11) NOT NULL,
   `shelf_id` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
+  `reason` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
   `moved_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Lưu lịch sử di chuyển sản phẩm giữa các kệ';
+
+--
+-- Đang đổ dữ liệu cho bảng `shelf_product_history`
+--
+
+INSERT INTO `shelf_product_history` (`history_id`, `product_id`, `shelf_id`, `quantity`, `reason`, `created_by`, `moved_at`, `created_at`, `updated_at`) VALUES
+(1, 3, 6, 50, 'Nhập kho mới', 5, '2025-05-27 07:17:42', '2025-06-02 07:17:42', '2025-06-02 07:17:42'),
+(2, 1, 1, 10, 'Tối ưu hóa không gian', 5, '2025-05-19 07:17:42', '2025-06-02 07:17:42', '2025-06-02 07:17:42'),
+(3, 8, 7, 30, 'Sắp xếp lại kho', 5, '2025-05-13 07:17:42', '2025-06-02 07:17:42', '2025-06-02 07:17:42');
 
 -- --------------------------------------------------------
 
@@ -454,14 +501,14 @@ CREATE TABLE `shelves` (
 --
 
 INSERT INTO `shelves` (`shelf_id`, `shelf_code`, `area_id`, `max_capacity`, `current_capacity`, `location_description`, `coordinates`, `created_at`, `updated_at`) VALUES
-(1, 'A01', 1, 500.00, 0.00, 'Kệ góc trái khu A', 'A1-L', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
-(2, 'A02', 1, 500.00, 0.00, 'Kệ giữa khu A', 'A2-M', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
+(1, 'A01', 1, 500.00, 115.00, 'Kệ góc trái khu A', 'A1-L', '2025-05-30 16:49:23', '2025-06-02 07:17:42'),
+(2, 'A02', 1, 500.00, 32.00, 'Kệ giữa khu A', 'A2-M', '2025-05-30 16:49:23', '2025-06-02 07:17:42'),
 (3, 'A03', 1, 500.00, 0.00, 'Kệ góc phải khu A', 'A3-R', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
-(4, 'B01', 2, 300.00, 0.00, 'Kệ lạnh khu B', 'B1-L', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
-(5, 'B02', 2, 300.00, 0.00, 'Kệ đông khu B', 'B2-M', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
-(6, 'C01', 3, 400.00, 0.00, 'Kệ đồ uống khu C', 'C1-L', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
-(7, 'C02', 3, 400.00, 0.00, 'Kệ rượu bia khu C', 'C2-R', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
-(8, 'D01', 4, 600.00, 0.00, 'Kệ hàng gia dụng khu D', 'D1-M', '2025-05-30 16:49:23', '2025-05-30 16:49:23');
+(4, 'B01', 2, 300.00, 15.00, 'Kệ lạnh khu B', 'B1-L', '2025-05-30 16:49:23', '2025-06-02 07:17:42'),
+(5, 'B02', 2, 300.00, 7.50, 'Kệ đông khu B', 'B2-M', '2025-05-30 16:49:23', '2025-06-02 07:17:42'),
+(6, 'C01', 3, 400.00, 33.00, 'Kệ đồ uống khu C', 'C1-L', '2025-05-30 16:49:23', '2025-06-02 07:17:42'),
+(7, 'C02', 3, 400.00, 26.40, 'Kệ rượu bia khu C', 'C2-R', '2025-05-30 16:49:23', '2025-06-02 07:17:42'),
+(8, 'D01', 4, 600.00, 13.24, 'Kệ hàng gia dụng khu D', 'D1-M', '2025-05-30 16:49:23', '2025-06-02 07:17:42');
 
 -- --------------------------------------------------------
 
@@ -558,7 +605,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `full_name`, `password_hash`, `email`, `role`, `is_locked`, `login_attempts`, `otp`, `otp_expiry`, `is_active`, `last_login`, `last_login_ip`, `last_login_device`, `created_at`, `updated_at`) VALUES
-(5, 'admin', 'Đào Văn Tâm', '$2y$10$W95IGnP7bfiJyzBAAzOCX.emUrt6bJsPV1tedJDSv1dDm4cQfmCrW', 'vantamst97@gmail.com', 'admin', 0, 0, NULL, NULL, 1, '2025-06-02 13:16:03', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-30 17:04:12', '2025-06-02 06:16:03'),
+(5, 'admin', 'Đào Văn Tâm', '$2y$10$W95IGnP7bfiJyzBAAzOCX.emUrt6bJsPV1tedJDSv1dDm4cQfmCrW', 'vantamst97@gmail.com', 'admin', 0, 0, NULL, NULL, 1, '2025-06-02 16:04:29', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-30 17:04:12', '2025-06-02 09:04:29'),
 (6, 'tam', 'Đào Văn Tâm', '$2y$10$MIighf3auCZATFwT5hiBKOdXSQJvktByka5lLk0/QsAcL021cAfz2', 'zzztamdzzz@gmail.com', 'user', 0, 0, NULL, NULL, 1, '2025-06-01 01:15:51', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-30 17:09:33', '2025-05-31 18:15:51'),
 (13, 'tam2', 'Đào Văn Tâm', '$2y$10$AzcZRNOZJ7sYsr1ctznKEepX1vOrrPiAT6q63KNYwLvFYJ7XKVc0K', 'vantamst99@gmail.com', 'employee', 1, 0, NULL, NULL, 1, '2025-06-01 00:50:23', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-30 18:58:58', '2025-05-31 18:16:13'),
 (14, 'quan', 'Vũ Minh Quân', '$2y$10$MB1Jj6XHpyL5MOzgtIyBMur8NNzH557wM4vn0VTa2g2JwcvaHGsHa', 'quan@gmail.com', 'user', 0, 0, '912361', '2025-06-01 01:14:39', 0, NULL, NULL, NULL, '2025-05-31 17:59:39', '2025-05-31 18:16:02');
@@ -635,7 +682,9 @@ INSERT INTO `user_logs` (`log_id`, `user_id`, `action`, `description`, `ip_addre
 (53, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-02 06:16:03'),
 (54, 5, 'TOGGLE_SUPPLIER_STATUS_API', 'API: Đổi trạng thái NCC ID: 4 sang discontinued', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-02 06:50:40'),
 (55, 5, 'TOGGLE_SUPPLIER_STATUS_API', 'API: Đổi trạng thái NCC ID: 4 sang active', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-02 06:50:46'),
-(56, 5, 'EDIT_SUPPLIER_API', 'API: Sửa NCC ID: 1', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-02 07:04:48');
+(56, 5, 'EDIT_SUPPLIER_API', 'API: Sửa NCC ID: 1', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-02 07:04:48'),
+(57, 5, 'ADD_AREA', 'Thêm khu vực mới: Kho Điện Tử (ID: 5)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-02 07:19:35'),
+(58, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-02 09:04:29');
 
 -- --------------------------------------------------------
 
@@ -659,7 +708,8 @@ INSERT INTO `warehouse_areas` (`area_id`, `area_name`, `description`, `created_a
 (1, 'Khu A', 'Khu vực lưu trữ thực phẩm khô', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
 (2, 'Khu B', 'Khu vực lưu trữ thực phẩm tươi sống', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
 (3, 'Khu C', 'Khu vực lưu trữ đồ uống', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
-(4, 'Khu D', 'Khu vực lưu trữ hàng hóa khác', '2025-05-30 16:49:23', '2025-05-30 16:49:23');
+(4, 'Khu D', 'Khu vực lưu trữ hàng hóa khác', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
+(5, 'Kho Điện Tử', 'Kho chứa hàng điện tử', '2025-06-02 07:19:35', '2025-06-02 07:19:35');
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -732,6 +782,15 @@ ALTER TABLE `import_orders`
   ADD KEY `fk_import_supplier` (`supplier_id`),
   ADD KEY `fk_import_user` (`created_by`),
   ADD KEY `idx_import_code` (`import_code`);
+
+--
+-- Chỉ mục cho bảng `inventory_adjustments`
+--
+ALTER TABLE `inventory_adjustments`
+  ADD PRIMARY KEY (`adjustment_id`),
+  ADD KEY `fk_adjustment_product` (`product_id`),
+  ADD KEY `fk_adjustment_shelf` (`shelf_id`),
+  ADD KEY `fk_adjustment_user` (`created_by`);
 
 --
 -- Chỉ mục cho bảng `inventory_checks`
@@ -922,6 +981,12 @@ ALTER TABLE `import_orders`
   MODIFY `import_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT cho bảng `inventory_adjustments`
+--
+ALTER TABLE `inventory_adjustments`
+  MODIFY `adjustment_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT cho bảng `inventory_checks`
 --
 ALTER TABLE `inventory_checks`
@@ -985,7 +1050,7 @@ ALTER TABLE `role_permissions`
 -- AUTO_INCREMENT cho bảng `shelf_product_history`
 --
 ALTER TABLE `shelf_product_history`
-  MODIFY `history_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `history_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT cho bảng `shelves`
@@ -1015,13 +1080,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT cho bảng `user_logs`
 --
 ALTER TABLE `user_logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT cho bảng `warehouse_areas`
 --
 ALTER TABLE `warehouse_areas`
-  MODIFY `area_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `area_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Ràng buộc đối với các bảng kết xuất
@@ -1075,6 +1140,14 @@ ALTER TABLE `import_details`
 ALTER TABLE `import_orders`
   ADD CONSTRAINT `fk_import_supplier` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`supplier_id`),
   ADD CONSTRAINT `fk_import_user` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`);
+
+--
+-- Ràng buộc cho bảng `inventory_adjustments`
+--
+ALTER TABLE `inventory_adjustments`
+  ADD CONSTRAINT `fk_adjustment_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`),
+  ADD CONSTRAINT `fk_adjustment_shelf` FOREIGN KEY (`shelf_id`) REFERENCES `shelves` (`shelf_id`),
+  ADD CONSTRAINT `fk_adjustment_user` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`);
 
 --
 -- Ràng buộc cho bảng `inventory_checks`
