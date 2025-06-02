@@ -135,7 +135,7 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
                 <div class="nav-dropdown" id="settingDropdown">
                     <div class="nav-section">
                         <div class="nav-item">
-                            <a href="?option=hethongIoT" class="nav-link <?php echo $option == 'hethongIoT' ? 'active' : ''; ?>">
+                            <a href="?option=barcode" class="nav-link <?php echo $option == 'barcode' ? 'active' : ''; ?>">
                                 <img src="gif/barcode.gif" alt="Icon" class="nav-icon">
                                 Hệ thống Barcode
                             </a>
@@ -229,8 +229,8 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
                     case 'kiemke':
                         include 'views/kiemke.php';
                         break;
-                    case 'hethongIoT':
-                        include 'views/hethongIoT.php';
+                    case 'barcode':
+                        include 'views/barcode.php';
                         break;
                     case 'baocaothongke':
                         include 'views/baocaothongke.php';

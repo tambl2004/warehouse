@@ -866,3 +866,506 @@
         box-shadow: none !important;
     }
 }
+
+/* ========================================= */
+/* CSS cho Module Quản Lý Barcode */
+/* ========================================= */
+
+/* Container chính cho barcode management */
+.barcode-management {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Barcode scan result styling */
+#scanResult {
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    transition: all 0.3s ease;
+}
+
+#scanResult.has-result {
+    background: white;
+    border: 2px solid #28a745;
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.2);
+}
+
+/* Barcode preview container */
+#barcodePreview {
+    animation: slideInUp 0.3s ease;
+}
+
+@keyframes slideInUp {
+    from { 
+        opacity: 0; 
+        transform: translateY(20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+/* Barcode image trong bảng */
+.barcode-table img {
+    max-height: 30px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.barcode-table img:hover {
+    transform: scale(2);
+    z-index: 1000;
+    position: relative;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+/* Form quét barcode */
+.scan-form-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    padding: 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+.scan-form-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+    background-size: 300% 100%;
+    animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* Scan input focus effect */
+#scanBarcodeValue {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 15px 20px;
+    font-size: 1.1rem;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+#scanBarcodeValue:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Barcode success animation */
+.scan-success {
+    animation: bounceIn 0.6s ease;
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Statistics cards cho barcode */
+.barcode-stats-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    padding: 25px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.barcode-stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-bg, linear-gradient(90deg, #667eea, #764ba2));
+}
+
+.barcode-stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+.barcode-stats-card.bg-primary {
+    --gradient-bg: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.barcode-stats-card.bg-success {
+    --gradient-bg: linear-gradient(90deg, #56cc9d, #6bb6ff);
+}
+
+.barcode-stats-card.bg-info {
+    --gradient-bg: linear-gradient(90deg, #3dd5f3, #3b82f6);
+}
+
+.barcode-stats-card.bg-warning {
+    --gradient-bg: linear-gradient(90deg, #ff9a56, #ffeaa7);
+}
+
+/* Tab content animation */
+.tab-pane {
+    animation: fadeInTab 0.3s ease;
+}
+
+@keyframes fadeInTab {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Barcode value display */
+.barcode-value {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #495057;
+    background: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border-left: 4px solid #667eea;
+}
+
+/* Bulk generate result cards */
+.bulk-result-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.bulk-result-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+/* Scan log table enhancements */
+.scan-log-row {
+    transition: all 0.2s ease;
+}
+
+.scan-log-row:hover {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    transform: scale(1.005);
+}
+
+.scan-result-badge {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.scan-result-success {
+    background: linear-gradient(135deg, #d4f8e8 0%, #a8e6cf 100%);
+    color: #155724;
+    border: 1px solid #28a745;
+}
+
+.scan-result-failed {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+    border: 1px solid #dc3545;
+}
+
+/* User avatar in logs */
+.avatar-placeholder {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Search và filter enhancements */
+.barcode-search-section {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-bottom: 25px;
+}
+
+.barcode-search-section .form-control,
+.barcode-search-section .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+    background: #fafafa;
+}
+
+.barcode-search-section .form-control:focus,
+.barcode-search-section .form-select:focus {
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Modal barcode enhancements */
+.barcode-modal .modal-content {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+}
+
+.barcode-modal .modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 20px 20px 0 0;
+    padding: 25px 30px;
+}
+
+.barcode-modal .modal-body {
+    padding: 30px;
+}
+
+.barcode-modal .modal-footer {
+    padding: 20px 30px 30px;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* Create product suggestion */
+.create-product-suggestion {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border: 2px solid #2196f3;
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 15px;
+    animation: pulse 2s infinite;
+}
+
+/* Print styles cho barcode */
+@media print {
+    .barcode-management .btn,
+    .barcode-management .nav-tabs,
+    .barcode-management .card-header,
+    .barcode-management .pagination {
+        display: none !important;
+    }
+    
+    .barcode-management .card {
+        box-shadow: none !important;
+        border: 1px solid #000 !important;
+    }
+    
+    .barcode-value {
+        page-break-inside: avoid;
+    }
+}
+
+/* Loading states */
+.barcode-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    flex-direction: column;
+}
+
+.barcode-loading .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.3em;
+    color: #667eea;
+}
+
+.barcode-loading-text {
+    margin-top: 20px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Error states */
+.barcode-error {
+    background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+    border: 2px solid #f44336;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    color: #d32f2f;
+}
+
+.barcode-error i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.7;
+}
+
+/* Success states */
+.barcode-success {
+    background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+    border: 2px solid #4caf50;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    color: #2e7d32;
+}
+
+.barcode-success i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.8;
+}
+
+/* Alert container */
+.alert-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 400px;
+}
+
+.alert-container .alert {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from { 
+        opacity: 0; 
+        transform: translateX(100%); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateX(0); 
+    }
+}
+
+/* Responsive cho barcode management */
+@media (max-width: 768px) {
+    .barcode-management {
+        padding: 15px;
+    }
+    
+    .warehouse-header .page-title {
+        font-size: 1.8rem;
+    }
+    
+    .barcode-stats-card {
+        margin-bottom: 15px;
+    }
+    
+    .barcode-stats-card h3 {
+        font-size: 1.5rem;
+    }
+    
+    .barcode-search-section {
+        padding: 20px;
+    }
+    
+    .nav-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .nav-tabs .nav-link {
+        font-size: 0.9rem;
+        padding: 10px 15px;
+    }
+    
+    .tab-content {
+        padding: 20px;
+    }
+    
+    .scan-form-container {
+        padding: 20px;
+    }
+    
+    #scanBarcodeValue {
+        font-size: 1rem;
+        padding: 12px 15px;
+    }
+    
+    .barcode-modal .modal-header,
+    .barcode-modal .modal-body,
+    .barcode-modal .modal-footer {
+        padding: 20px;
+    }
+    
+    .alert-container {
+        left: 15px;
+        right: 15px;
+        max-width: none;
+    }
+}
+
+/* Accessibility improvements */
+.barcode-management .btn:focus,
+.barcode-management .form-control:focus,
+.barcode-management .form-select:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+.barcode-management .nav-link:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .barcode-management {
+        background: white;
+    }
+    
+    .stats-card {
+        border: 2px solid #000;
+    }
+    
+    .nav-tabs .nav-link {
+        border: 1px solid #000;
+    }
+    
+    .form-control,
+    .form-select {
+        border: 2px solid #000;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .barcode-management *,
+    .barcode-management *::before,
+    .barcode-management *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+
+/* ========================================= */
+/* CSS cho Module Quản Lý Barcode */
+/* ========================================= */
+    
