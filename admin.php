@@ -143,7 +143,7 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
                     </div>
                     <div class="nav-section">
                         <div class="nav-item">
-                            <a href="?option=tichhop" class="nav-link <?php echo $option == 'tichhop' ? 'active' : ''; ?>">
+                            <a href="?option=rfid" class="nav-link <?php echo $option == 'rfid' ? 'active' : ''; ?>">
                                 <img src="gif/IoT.gif" alt="Icon" class="nav-icon">
                                 Hệ thống IoT & RFID
                             </a>
@@ -153,6 +153,7 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
             </div>
         </nav>
     </div>
+
 
     <!-- Main Content -->
     <div class="main-content">
@@ -235,8 +236,8 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
                     case 'baocaothongke':
                         include 'views/baocaothongke.php';
                         break;
-                    case 'tichhop':
-                        include 'views/tudonghoa.php';
+                    case 'rfid':
+                        include 'views/rfid.php';
                         break;
                     case 'caidat':
                         include 'views/setting.php';
@@ -249,9 +250,15 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> 
     
+    <?php if ($option == 'rfid') { ?>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="js/rfid.js"></script> 
+    <?php } ?>
+      
  <script>
 
         function toggleSidebar() {
