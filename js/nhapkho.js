@@ -326,29 +326,80 @@ class NhapKhoManager {
         try {
             const response = await fetch('api/import_handler.php?action=get_products');
             const data = await response.json();
-
+    
             if (data.success) {
                 this.products = data.data;
+                // THÊM DÒNG DEBUG NÀY:
+                console.log("NHAPKHO.JS: this.products SAU KHI GÁN TỪ API:", JSON.stringify(this.products, null, 2));
                 this.populateProductDropdowns();
+            } else {
+                console.error("NHAPKHO.JS: API get_products trả về success: false. Message:", data.message);
+                this.products = []; // Gán mảng rỗng nếu API lỗi
+                this.populateProductDropdowns(); // Vẫn gọi để xử lý UI (ví dụ: hiển thị "Không có sản phẩm")
             }
         } catch (error) {
-            console.error('Error loading products:', error);
+            console.error('NHAPKHO.JS: Lỗi khi loadProducts:', error);
+            this.products = []; // Gán mảng rỗng nếu có exception
+            this.populateProductDropdowns();
         }
     }
-
     // Điền dữ liệu vào dropdown sản phẩm
     populateProductDropdowns() {
+        // THÊM DÒNG DEBUG NÀY (nếu chưa có hoặc để kiểm tra lại):
+        console.log("NHAPKHO.JS: Bắt đầu populateProductDropdowns. Dữ liệu this.products:", JSON.stringify(this.products, null, 2));
+    
         const productSelects = document.querySelectorAll('.product-select');
         productSelects.forEach(select => {
-            const currentValue = select.value;
-            select.innerHTML = '<option value="">Chọn sản phẩm...</option>' +
-                this.products.map(product => 
-                    `<option value="${product.product_id}" data-price="${product.price || 0}">${product.name} - ${product.category_name || ''}</option>`
-                ).join('');
-            if (currentValue) select.value = currentValue;
+            const currentValue = select.value; // Lưu giá trị đang được chọn (nếu có)
+            let firstOptionHTML = '<option value="">Chọn sản phẩm...</option>';
+            // (Bạn có thể có logic phức tạp hơn ở đây để giữ lại option đầu tiên, đảm bảo nó hoạt động đúng)
+    
+            if (this.products && this.products.length > 0) {
+                select.innerHTML = firstOptionHTML +
+                    this.products.map(product => {
+                        // QUAN TRỌNG: Đảm bảo sử dụng đúng tên thuộc tính từ API
+                        const productName = product.product_name || 'Sản phẩm không có tên'; // SỬ DỤNG product.product_name
+                        const categoryName = product.category_name || ''; // category_name nếu có
+                        const sku = product.sku || '';
+                        const unitPrice = product.unit_price || 0;
+    
+                        // Kiểm tra trong console xem các giá trị này có đúng không
+                        // console.log(`Đang tạo option: Name=${productName}, SKU=${sku}, Category=${categoryName}`);
+    
+                        // Đây là cách hiển thị gợi ý (Tên sản phẩm (SKU) - Tên danh mục)
+                        return `<option value="${product.product_id}" data-price="${unitPrice}">${productName} ${sku ? `(${sku})` : ''} ${categoryName ? `- ${categoryName}` : ''}</option>`;
+                    }).join('');
+            } else {
+                // Nếu không có sản phẩm nào, chỉ hiển thị option "Chọn sản phẩm..."
+                select.innerHTML = firstOptionHTML;
+                console.log("NHAPKHO.JS: Không có sản phẩm nào trong this.products để hiển thị.");
+            }
+    
+            if (currentValue) { // Khôi phục giá trị đã chọn trước đó nếu có
+                select.value = currentValue;
+            }
+    
+            // Gán lại event listener để đảm bảo nó hoạt động cho các select mới hoặc được cập nhật
+            select.removeEventListener('change', this.handleProductChange.bind(this));
+            select.addEventListener('change', this.handleProductChange.bind(this));
         });
     }
-
+    handleProductChange(event) {
+        const selectElement = event.target;
+        const selectedOption = selectElement.selectedOptions[0];
+        if (!selectedOption || !selectedOption.dataset) return; // Kiểm tra selectedOption và dataset
+    
+        const price = selectedOption.dataset.price || 0;
+        const productRow = selectElement.closest('.product-row'); // Hoặc class của dòng sản phẩm
+    
+        if (productRow) {
+            const priceInput = productRow.querySelector('.price-input');
+            if (priceInput) {
+                priceInput.value = price;
+                this.calculateTotal();
+            }
+        }
+    }
     // Load danh sách kệ
     async loadShelves() {
         try {

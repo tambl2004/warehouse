@@ -3,7 +3,7 @@
  * API Handler cho quản lý nhập kho
  * File: api/import_handler.php
  */
-
+use TCPDF;
 session_start();
 require_once '../config/connect.php';
 require_once '../inc/auth.php';
@@ -42,8 +42,17 @@ try {
         case 'export_pdf':
             exportToPDF();
             break;
-        case 'export_excel':
+        case 'export_excel': 
             exportToExcel();
+            break;
+        case 'get_suppliers':
+            getSuppliers();
+            break;
+        case 'get_products':
+            getProducts();
+            break;
+        case 'get_shelves':
+            getShelves();
             break;
         default:
             echo json_encode(['success' => false, 'message' => 'Hành động không hợp lệ']);
@@ -634,52 +643,187 @@ function generateImportDetailHTML($import_order, $details) {
  */
 function exportToPDF() {
     global $pdo;
-    
+
     $import_id = (int)($_GET['id'] ?? 0);
-    
+
     if ($import_id <= 0) {
-        echo json_encode(['success' => false, 'message' => 'ID không hợp lệ']);
+        echo json_encode(['success' => false, 'message' => 'ID phiếu nhập không hợp lệ']);
         return;
     }
-    
-    // Lấy dữ liệu (tương tự getImportDetail)
-    // ... code lấy dữ liệu ...
-    
-    // Tạo PDF (cần cài đặt thư viện TCPDF hoặc FPDF)
-    // Hiện tại sẽ tạo file HTML để in
-    
-    header('Content-Type: text/html; charset=utf-8');
-    
-    echo "
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset='utf-8'>
-        <title>Phiếu nhập kho</title>
-        <style>
-            body { font-family: Arial, sans-serif; }
-            .header { text-align: center; margin-bottom: 30px; }
-            .info-table { width: 100%; margin-bottom: 20px; }
-            .info-table td { padding: 5px; border: 1px solid #ddd; }
-            .detail-table { width: 100%; border-collapse: collapse; }
-            .detail-table th, .detail-table td { 
-                padding: 8px; border: 1px solid #ddd; text-align: left; 
-            }
-            .text-center { text-align: center; }
-            .text-right { text-align: right; }
-        </style>
-    </head>
-    <body>
-        <div class='header'>
-            <h2>PHIẾU NHẬP KHO</h2>
-            <p>Mã phiếu: [MÃ PHIẾU]</p>
-        </div>
-        <!-- Nội dung PDF sẽ được tạo ở đây -->
-    </body>
-    </html>
-    ";
-}
 
+    try {
+        // Lấy thông tin phiếu nhập
+        $import_sql = "
+            SELECT 
+                io.*,
+                s.supplier_name, s.supplier_code, s.address as supplier_address,
+                s.phone_number as supplier_phone, s.email as supplier_email,
+                u.full_name as creator_name,
+                DATE_FORMAT(io.import_date, '%d/%m/%Y %H:%i') as formatted_import_date,
+                DATE_FORMAT(io.created_at, '%d/%m/%Y %H:%i') as formatted_created_at,
+                (SELECT us.full_name FROM users us WHERE us.user_id = io.approved_by) as approver_name,
+                DATE_FORMAT(io.approved_at, '%d/%m/%Y %H:%i') as formatted_approved_at
+            FROM import_orders io
+            LEFT JOIN suppliers s ON io.supplier_id = s.supplier_id
+            LEFT JOIN users u ON io.created_by = u.user_id
+            WHERE io.import_id = ?
+        ";
+        $stmt_import = $pdo->prepare($import_sql);
+        $stmt_import->execute([$import_id]);
+        $import_order = $stmt_import->fetch(PDO::FETCH_ASSOC);
+
+        if (!$import_order) {
+            echo json_encode(['success' => false, 'message' => 'Không tìm thấy phiếu nhập.']);
+            return;
+        }
+
+        // Lấy chi tiết sản phẩm
+        $details_sql = "
+            SELECT 
+                id.*,
+                p.product_name, p.sku, 
+                c.category_name
+            FROM import_details id
+            LEFT JOIN products p ON id.product_id = p.product_id
+            LEFT JOIN categories c ON p.category_id = c.category_id
+            WHERE id.import_id = ?
+            ORDER BY p.product_name
+        ";
+        $stmt_details = $pdo->prepare($details_sql);
+        $stmt_details->execute([$import_id]);
+        $details = $stmt_details->fetchAll(PDO::FETCH_ASSOC);
+
+        // --- BẮT ĐẦU TẠO PDF ---
+        if (!file_exists('../vendor/autoload.php')) {
+             error_log("Lỗi xuất PDF: Thư viện TCPDF (vendor/autoload.php) không tìm thấy.");
+             echo json_encode(['success' => false, 'message' => 'Lỗi cấu hình thư viện PDF. Vui lòng liên hệ quản trị viên.']);
+             return;
+        }
+        require_once '../vendor/autoload.php'; // (Đảm bảo đường dẫn đúng)
+
+        $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false); //
+
+        $pdf->SetCreator('Hệ Thống Quản Lý Kho'); //
+        $pdf->SetAuthor('Hệ Thống Quản Lý Kho'); //
+        $pdf->SetTitle('Phiếu Nhập Kho - ' . $import_order['import_code']); //
+        $pdf->SetMargins(15, 15, 15); //
+        $pdf->SetHeaderMargin(5); //
+        $pdf->SetFooterMargin(10); //
+        $pdf->SetAutoPageBreak(TRUE, 15); //
+        $pdf->SetFont('dejavusans', '', 10); // (dejavusans hỗ trợ tiếng Việt tốt)
+
+        $pdf->AddPage(); //
+
+        // HTML Content - Bạn có thể tùy chỉnh chi tiết hơn
+        $html = '
+        <style>
+            body { font-family: "dejavusans", sans-serif; line-height: 1.5; }
+            h1 { text-align: center; color: #333; font-size: 18px; margin-bottom: 5px; }
+            h2 { text-align: center; color: #555; font-size: 16px; margin-bottom: 20px; }
+            .info-table { width: 100%; margin-bottom: 15px; border-collapse: collapse; }
+            .info-table td { padding: 6px; font-size: 10px; }
+            .info-table .label { font-weight: bold; width: 120px; }
+            .details-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+            .details-table th { background-color: #f2f2f2; font-weight: bold; padding: 8px; border: 1px solid #ccc; text-align: center; font-size: 10px; }
+            .details-table td { padding: 7px; border: 1px solid #ccc; font-size: 10px; }
+            .text-right { text-align: right; }
+            .total-row td { font-weight: bold; background-color: #f8f8f8; }
+            .signatures { margin-top: 40px; width: 100%; }
+            .signatures td { width: 33.33%; text-align: center; font-size: 10px; vertical-align: top; }
+            .signatures .signature-space { height: 60px; display: block; margin-bottom: 5px; }
+        </style>
+        ';
+
+        $html .= '<h1>CÔNG TY TNHH ABC</h1>'; // Thay thế bằng thông tin công ty của bạn
+        $html .= '<p style="text-align:center; font-size:9px;">Địa chỉ: 123 Đường XYZ, Quận 1, TP. HCM<br>Điện thoại: (028) 38123456</p>';
+        $html .= '<h2>PHIẾU NHẬP KHO</h2>';
+
+        // Thông tin chung
+        $html .= '<table class="info-table">
+                    <tr>
+                        <td class="label">Mã phiếu:</td><td><strong>' . htmlspecialchars($import_order['import_code']) . '</strong></td>
+                        <td class="label">Ngày nhập:</td><td>' . htmlspecialchars($import_order['formatted_import_date']) . '</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Nhà cung cấp:</td><td colspan="3">' . htmlspecialchars($import_order['supplier_name']) . ' ('.htmlspecialchars($import_order['supplier_code']).')</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Địa chỉ NCC:</td><td colspan="3">' . htmlspecialchars($import_order['supplier_address']) . '</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Người tạo:</td><td>' . htmlspecialchars($import_order['creator_name']) . '</td>
+                        <td class="label">Trạng thái:</td><td>' . htmlspecialchars(ucfirst($import_order['status'])) . '</td>
+                    </tr>';
+        if (!empty($import_order['notes'])) {
+            $html .= '<tr><td class="label">Ghi chú:</td><td colspan="3">' . nl2br(htmlspecialchars($import_order['notes'])) . '</td></tr>';
+        }
+        if ($import_order['status'] == 'approved' && !empty($import_order['approver_name'])) {
+             $html .= '<tr><td class="label">Người duyệt:</td><td>' . htmlspecialchars($import_order['approver_name']) . '</td>';
+             $html .= '<td class="label">Ngày duyệt:</td><td>' . htmlspecialchars($import_order['formatted_approved_at']) . '</td></tr>';
+        }
+        $html .= '</table>';
+
+        // Chi tiết sản phẩm
+        $html .= '<table class="details-table">
+                    <thead>
+                        <tr>
+                            <th width="5%">STT</th>
+                            <th width="30%">Tên sản phẩm</th>
+                            <th width="15%">SKU</th>
+                            <th width="10%">SL</th>
+                            <th width="15%" class="text-right">Đơn giá (VNĐ)</th>
+                            <th width="25%" class="text-right">Thành tiền (VNĐ)</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+        $totalValue = 0;
+        $totalQuantity = 0;
+        foreach ($details as $index => $item) {
+            $subtotal = (float)$item['quantity'] * (float)$item['unit_price'];
+            $totalValue += $subtotal;
+            $totalQuantity += (int)$item['quantity'];
+            $html .= '<tr>
+                        <td style="text-align:center;">'.($index + 1).'</td>
+                        <td>'.htmlspecialchars($item['product_name']).'</td>
+                        <td>'.htmlspecialchars($item['sku']).'</td>
+                        <td style="text-align:center;">'.number_format($item['quantity']).'</td>
+                        <td class="text-right">'.number_format($item['unit_price'], 0, ',', '.').'</td>
+                        <td class="text-right">'.number_format($subtotal, 0, ',', '.').'</td>
+                      </tr>';
+        }
+         $html .= '<tr class="total-row">
+                    <td colspan="3" class="text-right"><strong>TỔNG CỘNG</strong></td>
+                    <td style="text-align:center;"><strong>'.number_format($totalQuantity).'</strong></td>
+                    <td></td>
+                    <td class="text-right"><strong>'.number_format($totalValue, 0, ',', '.').'</strong></td>
+                  </tr>';
+        $html .= '</tbody></table>';
+
+
+
+        // Chữ ký
+        $html .= '
+        <table class="signatures">
+            <tr>
+                <td><strong>Người lập phiếu</strong><br>(Ký, ghi rõ họ tên)<br><span class="signature-space"></span><br>'.htmlspecialchars($import_order['creator_name']).'</td>
+                <td><strong>Kế toán trưởng</strong><br>(Ký, ghi rõ họ tên)<br><span class="signature-space"></span><br></td>
+                <td><strong>Thủ kho</strong><br>(Ký, ghi rõ họ tên)<br><span class="signature-space"></span><br></td>
+            </tr>
+        </table>';
+
+        $pdf->writeHTML($html, true, false, true, false, ''); //
+
+        $filename = 'PhieuNhapKho_' . str_replace('-', '', $import_order['import_code']) . '.pdf';
+        $pdf->Output($filename, 'I'); // I: hiển thị inline, D: download //
+        exit; // Quan trọng
+
+    } catch (Exception $e) {
+        error_log("Lỗi xuất PDF phiếu nhập: " . $e->getMessage());
+        if (!headers_sent()) {
+             echo json_encode(['success' => false, 'message' => 'Có lỗi khi xuất PDF: ' . $e->getMessage()]);
+        }
+    }
+}
 /**
  * Xuất Excel
  */
@@ -702,4 +846,70 @@ function exportToExcel() {
     ";
 }
 
+function getSuppliers() {
+    global $pdo;
+    try {
+        $stmt = $pdo->query("SELECT supplier_id, supplier_name, phone_number, address FROM suppliers WHERE status = 'active' ORDER BY supplier_name");
+        $suppliers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $formattedSuppliers = array_map(function($supplier) {
+            return [
+                'supplier_id' => $supplier['supplier_id'],
+                'name' => $supplier['supplier_name'], // JS mong đợi 'name'
+                'phone' => $supplier['phone_number'], // JS mong đợi 'phone'
+                'address' => $supplier['address']     // JS mong đợi 'address'
+            ];
+        }, $suppliers);
+        echo json_encode(['success' => true, 'data' => $formattedSuppliers]);
+    } catch (Exception $e) {
+        error_log("Lỗi getSuppliers: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Lỗi khi lấy danh sách nhà cung cấp.']);
+    }
+}
+
+/**
+ * Lấy danh sách sản phẩm đang kinh doanh và còn hoạt động
+ */
+function getProducts() {
+    global $pdo;
+    try {
+        $stmt = $pdo->query("
+            SELECT p.product_id, p.product_name, p.unit_price, p.sku, c.category_name
+            FROM products p
+            LEFT JOIN categories c ON p.category_id = c.category_id
+            WHERE p.status = 'in_stock' AND p.is_active = 1
+            ORDER BY p.product_name
+        ");
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode(['success' => true, 'data' => $products]); //
+    } catch (Exception $e) {
+        error_log("Lỗi getProducts: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Lỗi khi lấy danh sách sản phẩm.']);
+    }
+}
+/**
+ * Lấy danh sách kệ kho
+ */
+function getShelves() {
+    global $pdo;
+    try {
+        $stmt = $pdo->query("
+            SELECT s.shelf_id, s.shelf_code, wa.area_name
+            FROM shelves s
+            LEFT JOIN warehouse_areas wa ON s.area_id = wa.area_id
+            ORDER BY wa.area_name, s.shelf_code
+        ");
+        $shelves = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $formattedShelves = array_map(function($shelf) {
+            return [
+                'shelf_id' => $shelf['shelf_id'],
+                'shelf_code' => $shelf['shelf_code'],
+                'location' => $shelf['area_name'] // JS mong đợi 'location'
+            ];
+        }, $shelves);
+        echo json_encode(['success' => true, 'data' => $formattedShelves]);
+    } catch (Exception $e) {
+        error_log("Lỗi getShelves: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Lỗi khi lấy danh sách kệ.']);
+    }
+}
 ?> 

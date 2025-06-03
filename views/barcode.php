@@ -449,7 +449,7 @@ $products = $pdo->query("SELECT product_id, product_name, sku FROM products WHER
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-primary" onclick="saveBarcodeModal()">Lưu</button>
+                    <button type="button" class="btn btn-primary" onclick="barcodeManager.saveBarcodeModal()">Lưu</button>
                 </div>
             </div>
         </div>

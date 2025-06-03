@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: localhost
--- Thời gian đã tạo: Th6 03, 2025 lúc 12:57 PM
+-- Thời gian đã tạo: Th6 03, 2025 lúc 07:31 PM
 -- Phiên bản máy phục vụ: 5.7.24
 -- Phiên bản PHP: 8.3.1
 
@@ -57,7 +57,7 @@ CREATE TABLE `barcodes` (
 --
 
 INSERT INTO `barcodes` (`barcode_id`, `barcode_value`, `product_id`, `lot_number`, `expiry_date`, `created_at`, `updated_at`) VALUES
-(1, '8934563123456', 1, 'LOT001', '2024-12-31', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
+(1, '8934563123456', 1, 'LOT001', '2025-06-30', '2025-05-30 16:49:23', '2025-06-03 18:20:53'),
 (2, '8934563234567', 2, 'LOT002', '2024-06-15', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
 (3, '8934563345678', 3, 'LOT003', '2025-03-20', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
 (4, '8934563456789', 4, 'LOT004', '2025-12-31', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
@@ -85,7 +85,9 @@ CREATE TABLE `barcode_scan_logs` (
 --
 
 INSERT INTO `barcode_scan_logs` (`scan_id`, `barcode_id`, `user_id`, `scan_time`, `scan_result`, `description`, `created_at`, `updated_at`) VALUES
-(1, 1, 5, '2025-06-03 09:14:23', 'success', '', '2025-06-03 09:14:23', '2025-06-03 09:14:23');
+(1, 1, 5, '2025-06-03 09:14:23', 'success', '', '2025-06-03 09:14:23', '2025-06-03 09:14:23'),
+(2, 2, 5, '2025-06-03 14:08:30', 'success', '', '2025-06-03 14:08:30', '2025-06-03 14:08:30'),
+(3, 1, 5, '2025-06-03 18:05:43', 'success', '', '2025-06-03 18:05:43', '2025-06-03 18:05:43');
 
 -- --------------------------------------------------------
 
@@ -167,6 +169,13 @@ CREATE TABLE `import_details` (
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Lưu chi tiết phiếu nhập kho';
 
+--
+-- Đang đổ dữ liệu cho bảng `import_details`
+--
+
+INSERT INTO `import_details` (`import_detail_id`, `import_id`, `product_id`, `quantity`, `unit_price`, `lot_number`, `expiry_date`, `shelf_id`, `created_at`, `updated_at`) VALUES
+(1, 1, 9, 2, 32000000.00, 'Lô1', '2025-06-18', 5, '2025-06-03 19:16:47', '2025-06-03 19:16:47');
+
 -- --------------------------------------------------------
 
 --
@@ -180,9 +189,22 @@ CREATE TABLE `import_orders` (
   `created_by` int(11) DEFAULT NULL,
   `import_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `status` enum('pending','approved','rejected') COLLATE utf8mb4_unicode_ci DEFAULT 'pending' COMMENT 'Trạng thái duyệt phiếu nhập',
+  `notes` text COLLATE utf8mb4_unicode_ci COMMENT 'Ghi chú cho phiếu nhập',
+  `approved_by` int(11) DEFAULT NULL COMMENT 'ID người duyệt',
+  `approved_at` datetime DEFAULT NULL COMMENT 'Thời gian duyệt',
+  `rejected_by` int(11) DEFAULT NULL COMMENT 'ID người từ chối',
+  `rejected_at` datetime DEFAULT NULL COMMENT 'Thời gian từ chối',
+  `rejection_reason` text COLLATE utf8mb4_unicode_ci COMMENT 'Lý do từ chối',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Lưu thông tin phiếu nhập kho';
+
+--
+-- Đang đổ dữ liệu cho bảng `import_orders`
+--
+
+INSERT INTO `import_orders` (`import_id`, `import_code`, `supplier_id`, `created_by`, `import_date`, `status`, `notes`, `approved_by`, `approved_at`, `rejected_by`, `rejected_at`, `rejection_reason`, `created_at`, `updated_at`) VALUES
+(1, 'NHAP-20250604-001', 2, 5, '2025-06-03 19:16:47', 'approved', 'ok', 5, '2025-06-04 02:23:19', NULL, NULL, NULL, '2025-06-03 19:16:47', '2025-06-03 19:23:19');
 
 -- --------------------------------------------------------
 
@@ -320,7 +342,7 @@ INSERT INTO `products` (`product_id`, `sku`, `product_name`, `description`, `uni
 (6, 'SP006', 'Bún khô Bình Tây 500g', 'Bún khô truyền thống Bình Tây gói 500g', 15000.00, 300, NULL, 1, 0.80, NULL, 'in_stock', 1, 5, '2025-05-30 16:49:23', '2025-06-03 11:35:15'),
 (7, 'SP007', 'Cá hồi Na Uy 1kg', 'Cá hồi tươi nhập khẩu Na Uy', 350000.00, 20, NULL, 2, 1.50, NULL, 'discontinued', 1, 5, '2025-05-30 16:49:23', '2025-06-03 11:36:05'),
 (8, 'SP008', 'Bia Heineken 330ml', 'Bia Heineken lon 330ml', 18000.00, 400, NULL, 3, 0.33, NULL, 'in_stock', 1, 5, '2025-05-30 16:49:23', '2025-06-03 11:36:05'),
-(9, 'HA001', 'MacBook Pro M2', 'mạc bục cực xịn xò', 32000000.00, 10, '2030-02-02', 6, 1.00, 'products/product_1748800888_683c9578161ab.png', 'in_stock', 1, 5, '2025-06-01 18:01:28', '2025-06-03 11:36:05'),
+(9, 'HA001', 'MacBook Pro M2', 'mạc bục cực xịn xò', 32000000.00, 12, '2030-02-02', 6, 1.00, 'products/product_1748800888_683c9578161ab.png', 'in_stock', 1, 5, '2025-06-01 18:01:28', '2025-06-03 19:23:19'),
 (10, 'HA002', 'iPhone 15 Pro Max', 'Điện thoại logo quả táo cắn dở, chạy hệ điều hành ios', 32000000.00, 30, '2030-06-02', 6, 0.03, 'products/product_1748807152_683cadf012a8b.jpg', 'in_stock', 1, 5, '2025-06-01 19:45:52', '2025-06-03 11:36:05');
 
 -- --------------------------------------------------------
@@ -349,6 +371,7 @@ INSERT INTO `product_locations` (`product_id`, `shelf_id`, `quantity`, `last_upd
 (6, 2, 40, '2025-06-02 14:17:42'),
 (7, 5, 5, '2025-06-02 14:17:42'),
 (8, 7, 80, '2025-06-02 14:17:42'),
+(9, 5, 2, '2025-06-04 02:23:19'),
 (9, 8, 3, '2025-06-02 14:17:42'),
 (10, 8, 8, '2025-06-02 14:17:42');
 
@@ -508,7 +531,8 @@ CREATE TABLE `shelf_product_history` (
 INSERT INTO `shelf_product_history` (`history_id`, `product_id`, `shelf_id`, `quantity`, `reason`, `created_by`, `moved_at`, `created_at`, `updated_at`) VALUES
 (1, 3, 6, 50, 'Nhập kho mới', 5, '2025-05-27 07:17:42', '2025-06-02 07:17:42', '2025-06-02 07:17:42'),
 (2, 1, 1, 10, 'Tối ưu hóa không gian', 5, '2025-05-19 07:17:42', '2025-06-02 07:17:42', '2025-06-02 07:17:42'),
-(3, 8, 7, 30, 'Sắp xếp lại kho', 5, '2025-05-13 07:17:42', '2025-06-02 07:17:42', '2025-06-02 07:17:42');
+(3, 8, 7, 30, 'Sắp xếp lại kho', 5, '2025-05-13 07:17:42', '2025-06-02 07:17:42', '2025-06-02 07:17:42'),
+(4, 9, 5, 2, NULL, 5, '2025-06-03 19:23:19', '2025-06-03 19:23:19', '2025-06-03 19:23:19');
 
 -- --------------------------------------------------------
 
@@ -537,7 +561,7 @@ INSERT INTO `shelves` (`shelf_id`, `shelf_code`, `area_id`, `max_capacity`, `cur
 (2, 'A02', 1, 500.00, 32.00, 'Kệ giữa khu A', 'A2-M', '2025-05-30 16:49:23', '2025-06-02 07:17:42'),
 (3, 'A03', 1, 500.00, 0.00, 'Kệ góc phải khu A', 'A3-R', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
 (4, 'B01', 2, 300.00, 15.00, 'Kệ lạnh khu B', 'B1-L', '2025-05-30 16:49:23', '2025-06-02 07:17:42'),
-(5, 'B02', 2, 300.00, 7.50, 'Kệ đông khu B', 'B2-M', '2025-05-30 16:49:23', '2025-06-02 07:17:42'),
+(5, 'B02', 2, 300.00, 9.50, 'Kệ đông khu B', 'B2-M', '2025-05-30 16:49:23', '2025-06-03 19:23:19'),
 (6, 'C01', 3, 400.00, 33.00, 'Kệ đồ uống khu C', 'C1-L', '2025-05-30 16:49:23', '2025-06-02 07:17:42'),
 (7, 'C02', 3, 400.00, 26.40, 'Kệ rượu bia khu C', 'C2-R', '2025-05-30 16:49:23', '2025-06-02 07:17:42'),
 (8, 'D01', 4, 600.00, 13.24, 'Kệ hàng gia dụng khu D', 'D1-M', '2025-05-30 16:49:23', '2025-06-02 07:17:42');
@@ -721,7 +745,10 @@ INSERT INTO `user_logs` (`log_id`, `user_id`, `action`, `description`, `ip_addre
 (60, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-02 16:51:31'),
 (61, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-03 08:40:43'),
 (62, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-03 09:09:41'),
-(63, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-03 09:48:26');
+(63, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-03 09:48:26'),
+(64, 5, 'EDIT_BARCODE', 'Sửa mã vạch ID: 1', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-03 18:20:53'),
+(65, 5, 'CREATE_IMPORT_ORDER', 'Tạo phiếu nhập: NHAP-20250604-001', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-03 19:16:47'),
+(66, 5, 'APPROVE_IMPORT', 'Duyệt phiếu nhập: NHAP-20250604-001', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-03 19:23:19');
 
 -- --------------------------------------------------------
 
@@ -818,7 +845,9 @@ ALTER TABLE `import_orders`
   ADD UNIQUE KEY `import_code` (`import_code`),
   ADD KEY `fk_import_supplier` (`supplier_id`),
   ADD KEY `fk_import_user` (`created_by`),
-  ADD KEY `idx_import_code` (`import_code`);
+  ADD KEY `idx_import_code` (`import_code`),
+  ADD KEY `fk_import_approved_by` (`approved_by`),
+  ADD KEY `fk_import_rejected_by` (`rejected_by`);
 
 --
 -- Chỉ mục cho bảng `inventory_adjustments`
@@ -985,7 +1014,7 @@ ALTER TABLE `barcodes`
 -- AUTO_INCREMENT cho bảng `barcode_scan_logs`
 --
 ALTER TABLE `barcode_scan_logs`
-  MODIFY `scan_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `scan_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT cho bảng `categories`
@@ -1009,13 +1038,13 @@ ALTER TABLE `export_orders`
 -- AUTO_INCREMENT cho bảng `import_details`
 --
 ALTER TABLE `import_details`
-  MODIFY `import_detail_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `import_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT cho bảng `import_orders`
 --
 ALTER TABLE `import_orders`
-  MODIFY `import_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `import_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT cho bảng `inventory_adjustments`
@@ -1087,7 +1116,7 @@ ALTER TABLE `role_permissions`
 -- AUTO_INCREMENT cho bảng `shelf_product_history`
 --
 ALTER TABLE `shelf_product_history`
-  MODIFY `history_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `history_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT cho bảng `shelves`
@@ -1117,7 +1146,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT cho bảng `user_logs`
 --
 ALTER TABLE `user_logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 
 --
 -- AUTO_INCREMENT cho bảng `warehouse_areas`
@@ -1184,6 +1213,8 @@ ALTER TABLE `import_details`
 -- Ràng buộc cho bảng `import_orders`
 --
 ALTER TABLE `import_orders`
+  ADD CONSTRAINT `fk_import_approved_by` FOREIGN KEY (`approved_by`) REFERENCES `users` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_import_rejected_by` FOREIGN KEY (`rejected_by`) REFERENCES `users` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_import_supplier` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`supplier_id`),
   ADD CONSTRAINT `fk_import_user` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`);
 

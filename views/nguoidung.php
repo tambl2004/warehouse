@@ -281,8 +281,6 @@ $allPermissions = [
                                     <th>Email</th>
                                     <th>Vai trò</th>
                                     <th>Trạng thái</th>
-                                    <th>Lần đăng nhập cuối</th>
-                                    <th>Ngày tạo</th>
                                     <th>Thao tác</th>
                                 </tr>
                             </thead>
@@ -328,10 +326,7 @@ $allPermissions = [
                                             </span>
                                         <?php endif; ?>
                                     </td>
-                                    <td>
-                                        <?php echo $user['lan_dang_nhap_cuoi'] ?? '<span class="text-muted">Chưa đăng nhập</span>'; ?>
-                                    </td>
-                                    <td><?php echo $user['ngay_tao']; ?></td>
+                                    
                                     <td>
                                         <div class="action-buttons" role="group">
                                             <button type="button" class="btn btn-edit" 

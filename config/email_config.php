@@ -14,9 +14,9 @@ class EmailConfig {
     private static $smtp_config = [
         'host' => 'smtp.gmail.com',
         'port' => 587,
-        'username' => 'your-email@gmail.com', // Thay đổi email của bạn
-        'password' => 'your-app-password',     // Thay đổi app password
-        'from_email' => 'your-email@gmail.com',
+        'username' => 'zzztamdzzz@gmail.com', // Thay đổi email của bạn
+        'password' => 'lnkl vnjl hgsh ursi',     // Thay đổi app password
+        'from_email' => 'zzztamdzzz@gmail.com',
         'from_name' => 'Hệ thống Kho Hàng',
         'encryption' => PHPMailer::ENCRYPTION_STARTTLS
     ];

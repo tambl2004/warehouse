@@ -248,13 +248,13 @@ $stats = $stmt->fetch();
                         <div class="mb-3">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <label class="form-label mb-0">Sản phẩm nhập kho</label>
-                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="addProductRow()">
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="nhapKhoManager.addProductRow()">
                                     <i class="fas fa-plus me-1"></i>
                                     Thêm sản phẩm
                                 </button>
                             </div>
                             
-                            <div id="productList">
+                            <div id="productRowsContainer">
                                 <div class="product-item border rounded p-3 mb-3" data-index="0">
                                     <div class="row">
                                         <div class="col-md-3">
@@ -366,6 +366,7 @@ $stats = $stmt->fetch();
         </div>
     </div>
 </div>
+<script src="js/nhapkho.js"></script>
 <script>
 let productIndex = 1;
 let currentImportId = null;

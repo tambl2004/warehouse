@@ -584,6 +584,12 @@ class BarcodeManager {
             return;
         }
 
+        // Hiển thị loading
+        const saveButton = document.querySelector('#barcodeModal .btn-primary');
+        const originalText = saveButton.textContent;
+        saveButton.disabled = true;
+        saveButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang lưu...';
+
         try {
             const formData = new FormData();
             formData.append('action', barcodeId ? 'edit_barcode' : 'add_barcode');
@@ -611,6 +617,10 @@ class BarcodeManager {
         } catch (error) {
             console.error('Lỗi lưu mã vạch:', error);
             this.showAlert('Có lỗi xảy ra khi lưu mã vạch', 'error');
+        } finally {
+            // Khôi phục button
+            saveButton.disabled = false;
+            saveButton.textContent = originalText;
         }
     }
 
@@ -784,22 +794,53 @@ class BarcodeManager {
     // Xóa form quét
     clearScanForm() {
         document.getElementById('scanForm').reset();
+        document.getElementById('scanResult').innerHTML = `
+            <div class="text-center">
+                <i class="fas fa-qrcode fa-3x text-muted mb-3"></i>
+                <p class="text-muted">Chưa có kết quả quét</p>
+            </div>
+        `;
         document.getElementById('scanBarcodeValue').focus();
     }
 
     // Tải xuống barcode
-    downloadBarcode(format) {
+    async downloadBarcode(format) {
         const barcodeValue = document.getElementById('generateBarcodeValue').value.trim();
         if (!barcodeValue) {
             this.showAlert('Vui lòng nhập mã vạch', 'warning');
             return;
         }
 
-        const url = `api/barcode_handler.php?action=generate_barcode&barcode=${barcodeValue}&type=${format}&width=3&height=80`;
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `barcode_${barcodeValue}.${format}`;
-        link.click();
+        try {
+            const url = `api/generate_barcode.php?barcode=${encodeURIComponent(barcodeValue)}&width=3&height=80`;
+            
+            // Fetch image as blob
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Không thể tạo mã vạch');
+            }
+            
+            const blob = await response.blob();
+            
+            // Tạo URL tạm thời cho blob
+            const blobUrl = window.URL.createObjectURL(blob);
+            
+            // Tạo link download
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = `barcode_${barcodeValue}.${format}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Giải phóng URL tạm thời
+            window.URL.revokeObjectURL(blobUrl);
+            
+            this.showAlert('Tải xuống mã vạch thành công!', 'success');
+        } catch (error) {
+            console.error('Lỗi tải xuống mã vạch:', error);
+            this.showAlert('Có lỗi khi tải xuống mã vạch', 'error');
+        }
     }
 
     // In barcode
@@ -898,4 +939,12 @@ class BarcodeManager {
 // Khởi tạo khi DOM loaded
 document.addEventListener('DOMContentLoaded', function() {
     window.barcodeManager = new BarcodeManager();
+    
+    // Thêm các hàm global để có thể gọi từ onclick
+    window.generateRandomBarcode = () => window.barcodeManager.generateRandomBarcode();
+    window.clearScanForm = () => window.barcodeManager.clearScanForm();
+    window.downloadBarcode = (format) => window.barcodeManager.downloadBarcode(format);
+    window.printBarcode = () => window.barcodeManager.printBarcode();
+    window.saveBarcodeModal = () => window.barcodeManager.saveBarcodeModal();
+    window.createNewProduct = () => window.barcodeManager.createNewProduct();
 }); 
