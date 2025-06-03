@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: localhost
--- Thời gian đã tạo: Th6 02, 2025 lúc 03:52 PM
+-- Thời gian đã tạo: Th6 03, 2025 lúc 12:57 PM
 -- Phiên bản máy phục vụ: 5.7.24
 -- Phiên bản PHP: 8.3.1
 
@@ -79,6 +79,13 @@ CREATE TABLE `barcode_scan_logs` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Lưu lịch sử quét mã vạch';
+
+--
+-- Đang đổ dữ liệu cho bảng `barcode_scan_logs`
+--
+
+INSERT INTO `barcode_scan_logs` (`scan_id`, `barcode_id`, `user_id`, `scan_time`, `scan_result`, `description`, `created_at`, `updated_at`) VALUES
+(1, 1, 5, '2025-06-03 09:14:23', 'success', '', '2025-06-03 09:14:23', '2025-06-03 09:14:23');
 
 -- --------------------------------------------------------
 
@@ -294,6 +301,8 @@ CREATE TABLE `products` (
   `volume` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT 'Thể tích sản phẩm (dm³)',
   `image_url` varchar(255) CHARACTER SET utf8 DEFAULT NULL COMMENT 'Đường dẫn hình ảnh sản phẩm',
   `status` enum('in_stock','out_of_stock','discontinued') COLLATE utf8mb4_unicode_ci DEFAULT 'in_stock' COMMENT 'Trạng thái sản phẩm',
+  `is_active` tinyint(1) DEFAULT '1',
+  `min_stock_level` int(11) DEFAULT '10' COMMENT 'Ngưỡng tồn kho tối thiểu để cảnh báo',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Lưu thông tin sản phẩm';
@@ -302,17 +311,17 @@ CREATE TABLE `products` (
 -- Đang đổ dữ liệu cho bảng `products`
 --
 
-INSERT INTO `products` (`product_id`, `sku`, `product_name`, `description`, `unit_price`, `stock_quantity`, `expiry_date`, `category_id`, `volume`, `image_url`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'SP001', 'Gạo tám xoan 5kg', 'Gạo tám xoan thơm ngon, bao 5kg', 125000.00, 100, NULL, 1, 5.00, NULL, 'in_stock', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
-(2, 'SP002', 'Thịt ba chỉ 1kg', 'Thịt ba chỉ tươi ngon, đóng khay 1kg', 180000.00, 50, NULL, 2, 1.00, NULL, 'in_stock', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
-(3, 'SP003', 'Nước ngọt Coca Cola 330ml', 'Nước ngọt có ga Coca Cola lon 330ml', 12000.00, 500, NULL, 3, 0.33, 'products/product_1748806742_683cac561352a.jpg', 'in_stock', '2025-05-30 16:49:23', '2025-06-01 19:39:02'),
-(4, 'SP004', 'Nước mắm Phú Quốc 500ml', 'Nước mắm nguyên chất Phú Quốc chai 500ml', 45000.00, 200, NULL, 4, 0.50, NULL, 'in_stock', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
-(5, 'SP005', 'Bát sứ trắng', 'Bát ăn cơm sứ trắng cao cấp', 25000.00, 150, NULL, 5, 0.20, NULL, 'in_stock', '2025-05-30 16:49:23', '2025-06-01 18:20:39'),
-(6, 'SP006', 'Bún khô Bình Tây 500g', 'Bún khô truyền thống Bình Tây gói 500g', 15000.00, 300, NULL, 1, 0.80, NULL, 'in_stock', '2025-05-30 16:49:23', '2025-05-30 16:49:23'),
-(7, 'SP007', 'Cá hồi Na Uy 1kg', 'Cá hồi tươi nhập khẩu Na Uy', 350000.00, 20, NULL, 2, 1.50, NULL, 'discontinued', '2025-05-30 16:49:23', '2025-06-01 19:40:06'),
-(8, 'SP008', 'Bia Heineken 330ml', 'Bia Heineken lon 330ml', 18000.00, 400, NULL, 3, 0.33, NULL, 'in_stock', '2025-05-30 16:49:23', '2025-06-01 19:40:02'),
-(9, 'HA001', 'MacBook Pro M2', 'mạc bục cực xịn xò', 32000000.00, 10, '2030-02-02', 6, 1.00, 'products/product_1748800888_683c9578161ab.png', 'in_stock', '2025-06-01 18:01:28', '2025-06-01 18:01:28'),
-(10, 'HA002', 'iPhone 15 Pro Max', 'Điện thoại logo quả táo cắn dở, chạy hệ điều hành ios', 32000000.00, 30, '2030-06-02', 6, 0.03, 'products/product_1748807152_683cadf012a8b.jpg', 'in_stock', '2025-06-01 19:45:52', '2025-06-01 19:45:52');
+INSERT INTO `products` (`product_id`, `sku`, `product_name`, `description`, `unit_price`, `stock_quantity`, `expiry_date`, `category_id`, `volume`, `image_url`, `status`, `is_active`, `min_stock_level`, `created_at`, `updated_at`) VALUES
+(1, 'SP001', 'Gạo tám xoan 5kg', 'Gạo tám xoan thơm ngon, bao 5kg', 125000.00, 100, NULL, 1, 5.00, NULL, 'in_stock', 1, 5, '2025-05-30 16:49:23', '2025-06-03 11:35:15'),
+(2, 'SP002', 'Thịt ba chỉ 1kg', 'Thịt ba chỉ tươi ngon, đóng khay 1kg', 180000.00, 50, NULL, 2, 1.00, NULL, 'in_stock', 1, 5, '2025-05-30 16:49:23', '2025-06-03 11:36:05'),
+(3, 'SP003', 'Nước ngọt Coca Cola 330ml', 'Nước ngọt có ga Coca Cola lon 330ml', 12000.00, 500, NULL, 3, 0.33, 'products/product_1748806742_683cac561352a.jpg', 'in_stock', 1, 5, '2025-05-30 16:49:23', '2025-06-03 11:36:05'),
+(4, 'SP004', 'Nước mắm Phú Quốc 500ml', 'Nước mắm nguyên chất Phú Quốc chai 500ml', 45000.00, 200, NULL, 4, 0.50, NULL, 'in_stock', 1, 5, '2025-05-30 16:49:23', '2025-06-03 11:36:05'),
+(5, 'SP005', 'Bát sứ trắng', 'Bát ăn cơm sứ trắng cao cấp', 25000.00, 150, NULL, 5, 0.20, NULL, 'in_stock', 1, 5, '2025-05-30 16:49:23', '2025-06-03 11:36:05'),
+(6, 'SP006', 'Bún khô Bình Tây 500g', 'Bún khô truyền thống Bình Tây gói 500g', 15000.00, 300, NULL, 1, 0.80, NULL, 'in_stock', 1, 5, '2025-05-30 16:49:23', '2025-06-03 11:35:15'),
+(7, 'SP007', 'Cá hồi Na Uy 1kg', 'Cá hồi tươi nhập khẩu Na Uy', 350000.00, 20, NULL, 2, 1.50, NULL, 'discontinued', 1, 5, '2025-05-30 16:49:23', '2025-06-03 11:36:05'),
+(8, 'SP008', 'Bia Heineken 330ml', 'Bia Heineken lon 330ml', 18000.00, 400, NULL, 3, 0.33, NULL, 'in_stock', 1, 5, '2025-05-30 16:49:23', '2025-06-03 11:36:05'),
+(9, 'HA001', 'MacBook Pro M2', 'mạc bục cực xịn xò', 32000000.00, 10, '2030-02-02', 6, 1.00, 'products/product_1748800888_683c9578161ab.png', 'in_stock', 1, 5, '2025-06-01 18:01:28', '2025-06-03 11:36:05'),
+(10, 'HA002', 'iPhone 15 Pro Max', 'Điện thoại logo quả táo cắn dở, chạy hệ điều hành ios', 32000000.00, 30, '2030-06-02', 6, 0.03, 'products/product_1748807152_683cadf012a8b.jpg', 'in_stock', 1, 5, '2025-06-01 19:45:52', '2025-06-03 11:36:05');
 
 -- --------------------------------------------------------
 
@@ -628,7 +637,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `full_name`, `password_hash`, `email`, `role`, `is_locked`, `login_attempts`, `otp`, `otp_expiry`, `is_active`, `last_login`, `last_login_ip`, `last_login_device`, `created_at`, `updated_at`) VALUES
-(5, 'admin', 'Đào Văn Tâm', '$2y$10$W95IGnP7bfiJyzBAAzOCX.emUrt6bJsPV1tedJDSv1dDm4cQfmCrW', 'vantamst97@gmail.com', 'admin', 0, 0, NULL, NULL, 1, '2025-06-02 16:04:29', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-30 17:04:12', '2025-06-02 09:04:29'),
+(5, 'admin', 'Đào Văn Tâm', '$2y$10$W95IGnP7bfiJyzBAAzOCX.emUrt6bJsPV1tedJDSv1dDm4cQfmCrW', 'vantamst97@gmail.com', 'admin', 0, 0, NULL, NULL, 1, '2025-06-03 16:48:26', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-30 17:04:12', '2025-06-03 09:48:26'),
 (6, 'tam', 'Đào Văn Tâm', '$2y$10$MIighf3auCZATFwT5hiBKOdXSQJvktByka5lLk0/QsAcL021cAfz2', 'zzztamdzzz@gmail.com', 'user', 0, 0, NULL, NULL, 1, '2025-06-01 01:15:51', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-30 17:09:33', '2025-05-31 18:15:51'),
 (13, 'tam2', 'Đào Văn Tâm', '$2y$10$AzcZRNOZJ7sYsr1ctznKEepX1vOrrPiAT6q63KNYwLvFYJ7XKVc0K', 'vantamst99@gmail.com', 'employee', 1, 0, NULL, NULL, 1, '2025-06-01 00:50:23', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-05-30 18:58:58', '2025-05-31 18:16:13'),
 (14, 'quan', 'Vũ Minh Quân', '$2y$10$MB1Jj6XHpyL5MOzgtIyBMur8NNzH557wM4vn0VTa2g2JwcvaHGsHa', 'quan@gmail.com', 'user', 0, 0, '912361', '2025-06-01 01:14:39', 0, NULL, NULL, NULL, '2025-05-31 17:59:39', '2025-05-31 18:16:02');
@@ -707,7 +716,12 @@ INSERT INTO `user_logs` (`log_id`, `user_id`, `action`, `description`, `ip_addre
 (55, 5, 'TOGGLE_SUPPLIER_STATUS_API', 'API: Đổi trạng thái NCC ID: 4 sang active', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-02 06:50:46'),
 (56, 5, 'EDIT_SUPPLIER_API', 'API: Sửa NCC ID: 1', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-02 07:04:48'),
 (57, 5, 'ADD_AREA', 'Thêm khu vực mới: Kho Điện Tử (ID: 5)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-02 07:19:35'),
-(58, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-02 09:04:29');
+(58, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-02 09:04:29'),
+(59, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-02 16:32:43'),
+(60, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-02 16:51:31'),
+(61, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-03 08:40:43'),
+(62, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-03 09:09:41'),
+(63, 5, 'LOGIN', 'Đăng nhập thành công', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '2025-06-03 09:48:26');
 
 -- --------------------------------------------------------
 
@@ -971,7 +985,7 @@ ALTER TABLE `barcodes`
 -- AUTO_INCREMENT cho bảng `barcode_scan_logs`
 --
 ALTER TABLE `barcode_scan_logs`
-  MODIFY `scan_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `scan_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT cho bảng `categories`
@@ -995,7 +1009,7 @@ ALTER TABLE `export_orders`
 -- AUTO_INCREMENT cho bảng `import_details`
 --
 ALTER TABLE `import_details`
-  MODIFY `import_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `import_detail_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `import_orders`
@@ -1103,7 +1117,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT cho bảng `user_logs`
 --
 ALTER TABLE `user_logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT cho bảng `warehouse_areas`

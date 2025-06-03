@@ -3,19 +3,18 @@
  * Dashboard API Handler
  * Xử lý các yêu cầu cho dashboard và thống kê tổng quan
  */
-
+session_start();
 require_once '../config/connect.php';
 require_once '../inc/auth.php';
 require_once '../inc/security.php';
 
-// Kiểm tra đăng nhập
-if (!isLoggedIn()) {
+if (!isLoggedIn()) { //
     http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'Yêu cầu đăng nhập']);
+    header('Content-Type: application/json'); 
+    echo json_encode(['success' => false, 'message' => 'Vui lòng đăng nhập để tiếp tục.']);
     exit;
 }
 
-// Lấy action từ request
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
 // Xử lý request dựa vào action
@@ -49,100 +48,100 @@ switch ($action) {
         break;
     default:
         http_response_code(400);
+        header('Content-Type: application/json'); 
         echo json_encode(['success' => false, 'message' => 'Action không hợp lệ']);
         break;
 }
 
+exit;
 /**
  * Lấy thống kê tổng quan
  */
 function getOverviewStats() {
     global $pdo;
-    
+    header('Content-Type: application/json'); 
+
     try {
-        // Tính toán các thống kê cơ bản
         $stats = [];
-        
-        // Tổng số sản phẩm
-        $stmt = $pdo->query("SELECT COUNT(*) as total FROM products WHERE is_active = 1");
-        $stats['total_products'] = $stmt->fetchColumn();
-        
-        // Tổng giá trị tồn kho
+        $stmt = $pdo->query("SELECT COUNT(*) as total FROM products WHERE status != 'discontinued'"); 
+        $stats['total_products'] = (int)$stmt->fetchColumn(); 
+
         $stmt = $pdo->query("
-            SELECT SUM(p.price * p.stock_quantity) as total_value 
-            FROM products p 
-            WHERE p.is_active = 1
-        ");
-        $stats['total_value'] = $stmt->fetchColumn() ?? 0;
-        
-        // Phiếu nhập trong tháng
+            SELECT SUM(p.unit_price * p.stock_quantity) as total_value
+            FROM products p
+            WHERE p.status = 'in_stock' -- Chỉ tính sản phẩm còn hàng
+        "); //
+        $stats['total_value'] = (float)($stmt->fetchColumn() ?? 0); 
         $stmt = $pdo->query("
-            SELECT COUNT(*) as total 
-            FROM import_orders 
-            WHERE DATE_FORMAT(created_at, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')
-            AND status = 'completed'
-        ");
-        $stats['monthly_imports'] = $stmt->fetchColumn();
-        
-        // Phiếu xuất trong tháng
+            SELECT COUNT(*) as total
+            FROM import_orders
+            WHERE DATE_FORMAT(import_date, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m') -- Sử dụng import_date
+            AND status = 'approved'
+        "); //
+        $stats['monthly_imports'] = (int)$stmt->fetchColumn();
         $stmt = $pdo->query("
-            SELECT COUNT(*) as total 
-            FROM export_orders 
-            WHERE DATE_FORMAT(created_at, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')
-            AND status = 'completed'
-        ");
-        $stats['monthly_exports'] = $stmt->fetchColumn();
-        
-        // Tính % thay đổi so với tháng trước
+            SELECT COUNT(*) as total
+            FROM export_orders
+            WHERE DATE_FORMAT(export_date, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m') -- Sử dụng export_date
+            AND status = 'approved'
+        "); //
+        $stats['monthly_exports'] = (int)$stmt->fetchColumn();
+
         $stats['products_change'] = calculateChange('products', 'monthly');
         $stats['value_change'] = calculateChange('inventory_value', 'monthly');
         $stats['imports_change'] = calculateChange('imports', 'monthly');
         $stats['exports_change'] = calculateChange('exports', 'monthly');
-        
+
         echo json_encode([
             'success' => true,
             'data' => $stats
         ]);
-        
-    } catch (Exception $e) {
-        error_log("Dashboard stats error: " . $e->getMessage());
+
+    } catch (PDOException $e) { 
+        error_log("Dashboard stats PDO error: " . $e->getMessage() . " SQL: " . ($stmt ? $stmt->queryString : "N/A"));
+        http_response_code(500); 
         echo json_encode([
             'success' => false,
-            'message' => 'Có lỗi xảy ra khi tải thống kê'
+            'message' => 'Lỗi truy vấn cơ sở dữ liệu khi tải thống kê.'
+        ]);
+    } catch (Exception $e) { 
+        error_log("Dashboard stats general error: " . $e->getMessage());
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Có lỗi không xác định xảy ra khi tải thống kê.'
         ]);
     }
 }
-
 /**
  * Lấy tồn kho theo danh mục
  */
 function getInventoryByCategory() {
     global $pdo;
-    
+    header('Content-Type: application/json');
+
     try {
-        $period = $_GET['period'] ?? 30;
-        
         $stmt = $pdo->prepare("
-            SELECT 
+            SELECT
                 c.category_name,
                 SUM(p.stock_quantity) as total_stock
             FROM categories c
             LEFT JOIN products p ON c.category_id = p.category_id
-            WHERE p.is_active = 1
+            WHERE p.status != 'discontinued' -- HOẶC p.is_active = 1 (nếu bạn đã thêm và cập nhật cột is_active)
             GROUP BY c.category_id, c.category_name
             ORDER BY total_stock DESC
         ");
         $stmt->execute();
-        $results = $stmt->fetchAll();
-        
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC); 
+
         $labels = [];
         $values = [];
-        
+
         foreach ($results as $row) {
             $labels[] = $row['category_name'];
-            $values[] = (int)$row['total_stock'];
+            $values[] = (int)$row['total_stock']; 
         }
-        
+
         echo json_encode([
             'success' => true,
             'data' => [
@@ -150,12 +149,20 @@ function getInventoryByCategory() {
                 'values' => $values
             ]
         ]);
-        
-    } catch (Exception $e) {
-        error_log("Inventory by category error: " . $e->getMessage());
+
+    } catch (PDOException $e) { 
+        error_log("Inventory by category PDO error: " . $e->getMessage() . " SQL: " . ($stmt ? $stmt->queryString : "N/A"));
+        http_response_code(500);
         echo json_encode([
             'success' => false,
-            'message' => 'Có lỗi xảy ra khi tải dữ liệu'
+            'message' => 'Lỗi truy vấn cơ sở dữ liệu khi tải tồn kho theo danh mục.'
+        ]);
+    } catch (Exception $e) { 
+        error_log("Inventory by category general error: " . $e->getMessage());
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Có lỗi không xác định xảy ra khi tải tồn kho theo danh mục.'
         ]);
     }
 }
@@ -165,28 +172,29 @@ function getInventoryByCategory() {
  */
 function getProductDistribution() {
     global $pdo;
-    
+    header('Content-Type: application/json'); // QUAN TRỌNG: Đảm bảo trả về JSON
+
     try {
         $stmt = $pdo->query("
-            SELECT 
+            SELECT
                 c.category_name,
                 COUNT(p.product_id) as product_count
             FROM categories c
-            LEFT JOIN products p ON c.category_id = p.category_id AND p.is_active = 1
+            LEFT JOIN products p ON c.category_id = p.category_id AND p.status != 'discontinued' -- HOẶC p.is_active = 1 (nếu bạn đã thêm và cập nhật cột is_active)
             GROUP BY c.category_id, c.category_name
-            HAVING product_count > 0
+            HAVING product_count > 0 -- Chỉ lấy các danh mục có sản phẩm
             ORDER BY product_count DESC
         ");
-        $results = $stmt->fetchAll();
-        
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC); 
+
         $labels = [];
         $values = [];
-        
+
         foreach ($results as $row) {
             $labels[] = $row['category_name'];
-            $values[] = (int)$row['product_count'];
+            $values[] = (int)$row['product_count']; 
         }
-        
+
         echo json_encode([
             'success' => true,
             'data' => [
@@ -194,12 +202,20 @@ function getProductDistribution() {
                 'values' => $values
             ]
         ]);
-        
-    } catch (Exception $e) {
-        error_log("Product distribution error: " . $e->getMessage());
+
+    } catch (PDOException $e) { 
+        error_log("Product distribution PDO error: " . $e->getMessage() . " SQL: " . ($stmt instanceof PDOStatement ? $stmt->queryString : "N/A"));
+        http_response_code(500);
         echo json_encode([
             'success' => false,
-            'message' => 'Có lỗi xảy ra khi tải dữ liệu'
+            'message' => 'Lỗi truy vấn cơ sở dữ liệu khi tải phân bố sản phẩm.'
+        ]);
+    } catch (Exception $e) { 
+        error_log("Product distribution general error: " . $e->getMessage());
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Có lỗi không xác định xảy ra khi tải phân bố sản phẩm.'
         ]);
     }
 }
@@ -212,8 +228,6 @@ function getImportExportTrend() {
     
     try {
         $period = $_GET['period'] ?? 30;
-        
-        // Tạo dữ liệu cho period ngày gần đây
         $labels = [];
         $imports = [];
         $exports = [];
@@ -240,7 +254,7 @@ function getImportExportTrend() {
             $stmt->execute([$date]);
             $exports[] = (int)$stmt->fetchColumn();
         }
-        
+        header('Content-Type: application/json');
         echo json_encode([
             'success' => true,
             'data' => [
@@ -264,74 +278,95 @@ function getImportExportTrend() {
  */
 function getAlerts() {
     global $pdo;
-    
+    header('Content-Type: application/json'); 
+
     try {
         $alerts = [];
-        
-        // Cảnh báo sản phẩm tồn kho thấp
-        $stmt = $pdo->query("
-            SELECT COUNT(*) 
-            FROM products 
-            WHERE stock_quantity <= min_stock_level 
-            AND stock_quantity > 0 
-            AND is_active = 1
+
+        $stmtLowStock = $pdo->query("
+            SELECT COUNT(*)
+            FROM products
+            WHERE stock_quantity <= min_stock_level
+            AND stock_quantity > 0
+            AND status != 'discontinued' -- HOẶC is_active = 1 (nếu bạn đã thêm và cập nhật cột is_active)
         ");
-        $lowStockCount = $stmt->fetchColumn();
-        
+        $lowStockCount = (int)$stmtLowStock->fetchColumn(); 
+
         if ($lowStockCount > 0) {
             $alerts[] = [
-                'type' => 'warning',
+                'type' => 'warning', 
                 'title' => 'Sản phẩm tồn kho thấp',
-                'message' => "$lowStockCount sản phẩm có tồn kho thấp cần nhập thêm"
+                'message' => "$lowStockCount sản phẩm có tồn kho thấp cần nhập thêm."
             ];
         }
-        
-        // Cảnh báo sản phẩm hết hàng
-        $stmt = $pdo->query("
-            SELECT COUNT(*) 
-            FROM products 
-            WHERE stock_quantity = 0 
-            AND is_active = 1
+
+        $stmtOutOfStock = $pdo->query("
+            SELECT COUNT(*)
+            FROM products
+            WHERE stock_quantity = 0
+            AND status != 'discontinued' -- HOẶC is_active = 1
         ");
-        $outOfStockCount = $stmt->fetchColumn();
-        
+        $outOfStockCount = (int)$stmtOutOfStock->fetchColumn(); 
+
         if ($outOfStockCount > 0) {
             $alerts[] = [
-                'type' => 'danger',
+                'type' => 'danger', // Kiểu cảnh báo
                 'title' => 'Sản phẩm hết hàng',
-                'message' => "$outOfStockCount sản phẩm đã hết hàng"
+                'message' => "$outOfStockCount sản phẩm đã hết hàng."
             ];
         }
-        
-        // Cảnh báo sản phẩm gần hết hạn
-        $stmt = $pdo->query("
-            SELECT COUNT(*) 
-            FROM products 
-            WHERE expiry_date IS NOT NULL 
-            AND expiry_date <= DATE_ADD(NOW(), INTERVAL 30 DAY)
-            AND expiry_date > NOW()
-            AND is_active = 1
+
+        $stmtExpiringSoon = $pdo->query("
+            SELECT COUNT(*)
+            FROM products
+            WHERE expiry_date IS NOT NULL
+            AND expiry_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY) -- Từ hôm nay đến 30 ngày tới
+            AND status != 'discontinued' -- HOẶC is_active = 1
         ");
-        $expiringCount = $stmt->fetchColumn();
-        
+        $expiringCount = (int)$stmtExpiringSoon->fetchColumn(); //
+
         if ($expiringCount > 0) {
             $alerts[] = [
-                'type' => 'warning',
-                'title' => 'Sản phẩm gần hết hạn',
-                'message' => "$expiringCount sản phẩm sẽ hết hạn trong 30 ngày tới"
+                'type' => 'warning', // Kiểu cảnh báo
+                'title' => 'Sản phẩm sắp hết hạn',
+                'message' => "$expiringCount sản phẩm sẽ hết hạn trong 30 ngày tới."
             ];
         }
         
+        $stmtExpired = $pdo->query("
+            SELECT COUNT(*)
+            FROM products
+            WHERE expiry_date IS NOT NULL
+            AND expiry_date < CURDATE()
+            AND status != 'discontinued' -- HOẶC is_active = 1
+        ");
+        $expiredCount = (int)$stmtExpired->fetchColumn();
+
+        if ($expiredCount > 0) {
+            $alerts[] = [
+                'type' => 'danger', // Kiểu cảnh báo
+                'title' => 'Sản phẩm đã hết hạn',
+                'message' => "$expiredCount sản phẩm đã quá hạn sử dụng."
+            ];
+        }
         echo json_encode([
             'success' => true,
             'data' => $alerts
         ]);
-        
-    } catch (Exception $e) {
-        error_log("Alerts error: " . $e->getMessage());
+
+    } catch (PDOException $e) { 
+        error_log("Alerts PDO error: " . $e->getMessage());
+        http_response_code(500);
         echo json_encode([
             'success' => false,
-            'message' => 'Có lỗi xảy ra khi tải cảnh báo'
+            'message' => 'Lỗi truy vấn cơ sở dữ liệu khi tải cảnh báo.'
+        ]);
+    } catch (Exception $e) { 
+        error_log("Alerts general error: " . $e->getMessage());
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Có lỗi không xác định xảy ra khi tải cảnh báo.'
         ]);
     }
 }
@@ -356,7 +391,7 @@ function getRecentActivities() {
         ");
         $stmt->execute();
         $activities = $stmt->fetchAll();
-        
+        header('Content-Type: application/json');
         echo json_encode([
             'success' => true,
             'data' => $activities
@@ -376,10 +411,12 @@ function getRecentActivities() {
  */
 function getTopProducts() {
     global $pdo;
-    
+    header('Content-Type: application/json'); 
     try {
+
         $stmt = $pdo->prepare("
-            SELECT 
+            SELECT
+                p.product_id, -- Thêm product_id để GROUP BY chính xác hơn
                 p.product_name,
                 p.sku,
                 p.image_url,
@@ -387,27 +424,35 @@ function getTopProducts() {
                 COALESCE(SUM(ed.quantity), 0) as total_exported
             FROM products p
             LEFT JOIN export_details ed ON p.product_id = ed.product_id
-            LEFT JOIN export_orders eo ON ed.export_order_id = eo.export_order_id
-            WHERE p.is_active = 1 
-            AND (eo.status = 'completed' OR eo.status IS NULL)
-            AND (eo.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) OR eo.created_at IS NULL)
-            GROUP BY p.product_id
-            ORDER BY total_exported DESC
+            LEFT JOIN export_orders eo ON ed.export_id = eo.export_id -- SỬA: ed.export_id = eo.export_id
+            WHERE p.is_active = 1
+            AND eo.status = 'approved' -- SỬA: eo.status = 'approved' (thay vì 'completed')
+            AND eo.export_date >= DATE_SUB(NOW(), INTERVAL 30 DAY) -- Lấy theo export_date của phiếu xuất
+            GROUP BY p.product_id, p.product_name, p.sku, p.image_url, p.stock_quantity -- SỬA: Thêm các cột không tổng hợp vào GROUP BY
+            ORDER BY total_exported DESC, p.product_name ASC
             LIMIT 10
         ");
         $stmt->execute();
-        $products = $stmt->fetchAll();
-        
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
         echo json_encode([
             'success' => true,
             'data' => $products
         ]);
-        
-    } catch (Exception $e) {
-        error_log("Top products error: " . $e->getMessage());
+
+    } catch (PDOException $e) {
+        error_log("Top products PDO error: " . $e->getMessage() . " SQL: " . ($stmt instanceof PDOStatement ? $stmt->queryString : "N/A"));
+        http_response_code(500);
         echo json_encode([
             'success' => false,
-            'message' => 'Có lỗi xảy ra khi tải dữ liệu'
+            'message' => 'Lỗi truy vấn cơ sở dữ liệu khi tải top sản phẩm.'
+        ]);
+    } catch (Exception $e) {
+        error_log("Top products general error: " . $e->getMessage());
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Có lỗi không xác định xảy ra khi tải top sản phẩm.'
         ]);
     }
 }
@@ -434,7 +479,7 @@ function getLowStockProducts() {
         ");
         $stmt->execute();
         $products = $stmt->fetchAll();
-        
+        header('Content-Type: application/json');
         echo json_encode([
             'success' => true,
             'data' => $products

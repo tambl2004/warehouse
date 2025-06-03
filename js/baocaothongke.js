@@ -595,10 +595,12 @@ function resetInventoryFilter() {
  * Tải dữ liệu báo cáo nhập/xuất
  */
 async function loadImportExportReportData() {
+    console.log('loadImportExportReportData CALLED');
     try {
         showLoading('import-export');
-        
         const filters = getImportExportFilters();
+        console.log('Filters for import/export:', filters);
+
         const response = await fetch('api/report_handler.php?action=import_export_report', {
             method: 'POST',
             headers: {
@@ -606,20 +608,50 @@ async function loadImportExportReportData() {
             },
             body: JSON.stringify(filters)
         });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            updateImportExportStats(data.data.stats);
-            updateImportExportChart(data.data.chart);
-            updateImportExportTable(data.data.details);
+        console.log('Response status:', response.status);
+
+        if (!response.ok) {
+            console.error('Network response was not ok:', response.statusText);
+            const errorText = await response.text();
+            console.error('Error response text:', errorText);
+            showError(`Lỗi máy chủ: ${response.statusText}. Chi tiết: ${errorText}`);
+            hideLoading('import-export');
+            return;
         }
-        
+
+        const data = await response.json();
+        console.log('Data received for import/export report:', data);
+
+        if (data.success && data.data) {
+            console.log('API call successful. Updating UI components for import/export...');
+            try {
+                console.log('Updating import/export stats with:', data.data.stats);
+                updateImportExportStats(data.data.stats);
+
+                console.log('Updating import/export chart with:', data.data.chart);
+                updateImportExportChart(data.data.chart);
+
+                console.log('Updating import/export table with details (count):', data.data.details ? data.data.details.length : 0);
+                updateImportExportTable(data.data.details);
+
+                console.log('UI components updated for import/export.');
+                clearErrorMessage(); 
+            } catch (uiError) {
+                console.error('Error updating UI for import/export report:', uiError);
+                // showError('Lỗi khi cập nhật giao diện báo cáo nhập xuất.');
+            }
+        } else {
+            console.warn('API call was not successful or data is missing for import/export:', data.message);
+            showError(data.message || 'Không thể tải báo cáo nhập/xuất.');
+            // Reset biểu đồ và bảng
+            updateImportExportChart({ labels: [], imports: [], exports: [] });
+            updateImportExportTable([]);
+            updateImportExportStats({ totalImportOrders: 0, totalExportOrders: 0, totalImportValue: 0, totalExportValue: 0 });
+        }
         hideLoading('import-export');
-        
     } catch (error) {
-        console.error('Error loading import/export report:', error);
-        showError('Có lỗi xảy ra khi tải báo cáo nhập/xuất');
+        console.error('Error in loadImportExportReportData function:', error);
+        showError('Có lỗi nghiêm trọng xảy ra khi tải báo cáo nhập/xuất.');
         hideLoading('import-export');
     }
 }
@@ -1126,3 +1158,99 @@ function showError(message) {
 function showSuccess(message) {
     alert(message); // Có thể thay thế bằng toast notification
 } 
+function updateImportExportChart(chartData) {
+    console.log('updateImportExportChart received chartData:', chartData);
+    if (importExportChart && chartData) { // Đảm bảo biến importExportChart đã được khởi tạo
+        importExportChart.data.labels = chartData.labels || [];
+        importExportChart.data.datasets[0].data = chartData.imports || []; // Dữ liệu cho 'Nhập kho'
+        importExportChart.data.datasets[1].data = chartData.exports || []; // Dữ liệu cho 'Xuất kho'
+        importExportChart.update();
+        console.log('Import/Export chart updated.');
+    } else {
+        console.warn('Could not update Import/Export chart. Chart instance (importExportChart) or chartData is missing or invalid.');
+        // Nếu biểu đồ đã được khởi tạo, bạn có thể reset nó
+        if (importExportChart) {
+            importExportChart.data.labels = [];
+            importExportChart.data.datasets[0].data = [];
+            importExportChart.data.datasets[1].data = [];
+            importExportChart.update();
+        }
+    }
+}
+function updateImportExportTable(details) {
+    const tbody = document.querySelector('#importExportDetailTable tbody');
+    if (!tbody) {
+        console.error('Import/Export detail table body not found!');
+        return;
+    }
+    tbody.innerHTML = ''; // Xóa dữ liệu cũ
+
+    if (!details || details.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-3">Không có dữ liệu chi tiết.</td></tr>`;
+        return;
+    }
+
+    details.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${item.order_code || 'N/A'}</td>
+            <td><span class="badge bg-${item.type === 'Nhập' ? 'success' : 'warning'}">${item.type}</span></td>
+            <td>${formatDateTime(item.order_date)}</td>
+            <td>${item.product_name || 'N/A'}</td>
+            <td>${formatNumber(item.quantity)}</td>
+            <td>${formatCurrency(item.total_item_value)}</td>
+            <td>${item.created_by_name || 'N/A'}</td>
+            <td><span class="badge bg-light text-dark">${item.status || 'N/A'}</span></td>
+        `;
+        tbody.appendChild(row);
+    });
+    console.log('Import/Export table updated.');
+}
+
+async function loadFinancialReportData() { // ĐỊNH NGHĨA HÀM NÀY
+    try {
+        showLoading('financial');
+        const filters = { // Lấy các filter tương ứng cho báo cáo tài chính
+            fromDate: document.getElementById('financialFromDate').value,
+            toDate: document.getElementById('financialToDate').value,
+            reportType: document.getElementById('financialReportType').value,
+            groupBy: document.getElementById('financialGroupBy').value
+        };
+
+        const response = await fetch('api/report_handler.php?action=financial_report', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(filters)
+        });
+        const data = await response.json();
+
+        if (data.success && data.data) {
+            updateFinancialStats(data.data.stats);
+            updateFinancialChart(data.data.chart); // Gọi hàm cập nhật biểu đồ
+        } else {
+            showError(data.message || 'Không thể tải báo cáo tài chính.');
+        }
+        hideLoading('financial');
+    } catch (error) {
+        console.error('Error loading financial report:', error);
+        showError('Lỗi khi tải báo cáo tài chính.');
+        hideLoading('financial');
+    }
+}
+
+/**
+ * Cập nhật biểu đồ tài chính
+ */
+function updateFinancialChart(chartData) { // ĐỊNH NGHĨA HÀM NÀY
+    if (financialChart && chartData) {
+        financialChart.data.labels = chartData.labels || [];
+        financialChart.data.datasets[0].data = chartData.revenue || []; // Giả sử dataset 0 là doanh thu
+        financialChart.data.datasets[1].data = chartData.cost || [];   // Giả sử dataset 1 là chi phí
+        // Bạn có thể thêm dataset cho lợi nhuận nếu muốn
+        // financialChart.data.datasets[2].data = chartData.profit || [];
+        financialChart.update();
+        console.log('Financial chart updated.');
+    } else {
+        console.warn('Could not update Financial chart. Chart instance or data missing.');
+    }
+}

@@ -246,7 +246,7 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
     <?php if ($option == 'rfid') { ?>
         <script src="js/rfid.js"></script> 
     <?php } ?>
-      
+
  <script>
 
         function toggleSidebar() {
