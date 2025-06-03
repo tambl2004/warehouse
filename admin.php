@@ -171,22 +171,9 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
                 </nav>
             </div>
             
-            <div class="user-profile">
-                <div class="user-info">
-                    <img src="image/vietnam.png" alt="flag" class="flag-icon">
-                    <div class="user-avatar">
-                        <img src="image/avatar.png" alt="" class="user-avatar">
-                    </div>
-                    <div class="dropdown">
-                        <span class="user-name dropdown-toggle" id="userDropdownToggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            Tâm
-                        </span>
-                        <ul class="dropdown-menu user-dropdown" aria-labelledby="userDropdownToggle">
-                            <li><a class="dropdown-item user-link" href="?option=taikhoan"><i class="fas fa-user"></i> Tài khoản của tôi</a></li>
-                            <li><a class="dropdown-item user-link" href="logout.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
-                        </ul>
-                    </div>
-                </div>
+            <div class="d-flex align-items-center">
+                <span class="me-3 fw-medium">Xin chào, Admin</span>
+                <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="window.location.href='logout.php'">Đăng xuất</button>
             </div>
         </div>
 

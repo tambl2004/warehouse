@@ -389,6 +389,24 @@ class SanPhamModel {
         
         return str_replace($accents, $no_accents, $str);
     }
+
+    // Lấy tất cả sản phẩm hoạt động cho RFID
+    public function layTatCaSanPhamHoatDongChoRFID() {
+        try {
+            $sql = "SELECT product_id, product_name, sku
+                    FROM products
+                    WHERE status != 'discontinued' AND status != 'Hết hàng' AND status != 'out_of_stock' -- Bạn có thể cần điều chỉnh các trạng thái này
+                    ORDER BY product_name ASC";
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute();
+            $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $products;
+        } catch (PDOException $e) {
+            error_log("Lỗi PDO khi lấy sản phẩm cho RFID: " . $e->getMessage());
+            return false; 
+        }
+    }
 }
 
 ?>

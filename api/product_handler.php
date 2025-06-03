@@ -212,7 +212,20 @@ switch ($action) {
              echo json_encode(['success' => false, 'message' => 'Phương thức POST được yêu cầu.']);
         }
         break;
-
+    case 'get_all_products_for_rfid':
+        try {         
+            $products = $model->layTatCaSanPhamHoatDongChoRFID(); 
+            if ($products !== false) {
+                echo json_encode(['success' => true, 'data' => $products]);
+            } else {
+                logSystem('ERROR', 'API_GET_ALL_PRODUCTS_RFID_FAIL', "API: Không thể lấy danh sách sản phẩm cho RFID.");
+                echo json_encode(['success' => false, 'message' => 'Không thể lấy danh sách sản phẩm.']);
+            }
+        } catch (Exception $e) {
+            logSystem('ERROR', 'API_GET_ALL_PRODUCTS_RFID_EXCEPTION', "API Exception: " . $e->getMessage());
+            echo json_encode(['success' => false, 'message' => 'Có lỗi xảy ra trong quá trình xử lý yêu cầu.']);
+        }
+        break;
     default:
         echo json_encode(['success' => false, 'message' => 'Action không hợp lệ.']);
         break;
