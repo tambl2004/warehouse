@@ -293,25 +293,6 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
             });
         });
 
-
-
-        document.addEventListener('DOMContentLoaded', function () {
-            const userName = document.querySelector('#userDropdownToggle');
-            const dropdown = document.querySelector('.user-dropdown');
-
-            // Gán sự kiện click cho tên người dùng
-            userName.addEventListener('click', function (e) {
-                e.preventDefault(); // Ngăn chặn hành động mặc định
-                dropdown.classList.toggle('show'); // Hiển thị hoặc ẩn dropdown
-            });
-
-            // Đóng dropdown khi click bên ngoài
-            document.addEventListener('click', function (e) {
-                if (!userName.contains(e.target) && !dropdown.contains(e.target)) {
-                    dropdown.classList.remove('show'); // Ẩn dropdown nếu click bên ngoài
-                }
-            });
-        });
     </script>
 </body>
 </html>     

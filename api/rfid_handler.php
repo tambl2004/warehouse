@@ -611,33 +611,46 @@ function getScanLogs() {
  * Lấy thống kê quét để vẽ chart
  */
 function getScanStats() {
-    global $conn;
-    
-    $sql = "SELECT 
+    global $conn; // $conn là đối tượng kết nối mysqli của bạn
+
+    // Sửa đổi câu SQL để tuân thủ ONLY_FULL_GROUP_BY
+    $sql = "SELECT
                 DATE_FORMAT(scan_time, '%H:00') as hour_label,
                 COUNT(*) as scan_count
-            FROM rfid_scan_logs 
+            FROM rfid_scan_logs
             WHERE DATE(scan_time) = CURDATE()
-            GROUP BY HOUR(scan_time)
-            ORDER BY HOUR(scan_time)";
-    
+            GROUP BY hour_label 
+            ORDER BY hour_label"; 
+
     $result = $conn->query($sql);
+
+    // Thêm kiểm tra lỗi truy vấn
+    if (!$result) {
+        error_log("Lỗi SQL trong getScanStats: " . $conn->error);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Có lỗi xảy ra khi lấy dữ liệu thống kê: ' . $conn->error
+        ]);
+        return;
+    }
+
     $labels = [];
     $values = [];
-    
+
     while ($row = $result->fetch_assoc()) {
         $labels[] = $row['hour_label'];
         $values[] = (int)$row['scan_count'];
     }
-    
+
     echo json_encode([
-        'success' => true, 
+        'success' => true,
         'data' => [
             'labels' => $labels,
             'values' => $values
         ]
     ]);
 }
+
 
 /**
  * Lấy cảnh báo RFID
