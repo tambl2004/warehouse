@@ -171,7 +171,7 @@ class BarcodeManager {
                             ${data.expiry_date ? `<p class="mb-0"><strong>Hạn sử dụng:</strong> ${this.formatDate(data.expiry_date)}</p>` : ''}
                         </div>
                         <div class="col-md-4 text-center">
-                            <img src="api/barcode_handler.php?action=generate_barcode&barcode=${data.barcode_value}&type=png&width=2&height=50" 
+                            <img src="api/generate_barcode.php?barcode=${data.barcode_value}&width=2&height=50" 
                                  alt="Barcode" class="img-fluid" style="max-height: 60px;">
                         </div>
                     </div>
@@ -346,10 +346,10 @@ class BarcodeManager {
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body text-center">
-                            <img src="api/barcode_handler.php?action=generate_barcode&barcode=${barcodeValue}&type=png&width=3&height=80" 
+                            <img src="api/generate_barcode.php?barcode=${barcodeValue}&width=3&height=80" 
                                  alt="Barcode" class="img-fluid mb-3">
                             <div>
-                                <button class="btn btn-outline-primary me-2" onclick="window.open('api/barcode_handler.php?action=generate_barcode&barcode=${barcodeValue}&type=png&width=3&height=80', '_blank')">
+                                <button class="btn btn-outline-primary me-2" onclick="window.open('api/generate_barcode.php?barcode=${barcodeValue}&width=3&height=80', '_blank')">
                                     <i class="fas fa-download me-1"></i>Tải PNG
                                 </button>
                                 <button class="btn btn-outline-secondary" onclick="window.print()">
@@ -474,7 +474,7 @@ class BarcodeManager {
                                     <div class="col-md-6 mb-3">
                                         <div class="card">
                                             <div class="card-body text-center">
-                                                <img src="api/barcode_handler.php?action=generate_barcode&barcode=${barcode.barcode_value}&type=png&width=2&height=50" 
+                                                <img src="api/generate_barcode.php?barcode=${barcode.barcode_value}&width=2&height=50" 
                                                      alt="Barcode" class="img-fluid mb-2">
                                                 <p class="small mb-0">${barcode.barcode_value}</p>
                                             </div>
@@ -517,7 +517,7 @@ class BarcodeManager {
 
         try {
             imageDiv.innerHTML = `
-                <img src="api/barcode_handler.php?action=generate_barcode&barcode=${barcodeValue}&type=png&width=3&height=80" 
+                <img src="api/generate_barcode.php?barcode=${barcodeValue}&width=3&height=80" 
                      alt="Barcode Preview" class="img-fluid">
                 <p class="mt-2 mb-0">${barcodeValue}</p>
             `;
@@ -823,7 +823,7 @@ class BarcodeManager {
                 </head>
                 <body>
                     <h2>Mã vạch: ${barcodeValue}</h2>
-                    <img src="api/barcode_handler.php?action=generate_barcode&barcode=${barcodeValue}&type=png&width=3&height=80" alt="Barcode">
+                    <img src="api/generate_barcode.php?barcode=${barcodeValue}&width=3&height=80" alt="Barcode">
                     <script>window.print(); window.close();</script>
                 </body>
             </html>

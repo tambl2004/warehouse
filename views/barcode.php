@@ -160,11 +160,7 @@ $products = $pdo->query("SELECT product_id, product_name, sku FROM products WHER
                                     <i class="fas fa-list me-2"></i>Danh Sách Mã Vạch
                                 </h5>
                             </div>
-                            <div class="col-auto">
-                                <button class="btn btn-primary" onclick="showAddBarcodeModal()">
-                                    <i class="fas fa-plus me-2"></i>Thêm Mã Vạch
-                                </button>
-                            </div>
+                           
                         </div>
                     </div>
                     <div class="card-body">
@@ -185,7 +181,7 @@ $products = $pdo->query("SELECT product_id, product_name, sku FROM products WHER
                                 </select>
                             </div>
                             <div class="col-md-2">
-                                <button class="btn btn-outline-primary" onclick="searchBarcodes()">
+                            <button class="btn btn-outline-primary" onclick="barcodeManager.searchBarcodes()">
                                     <i class="fas fa-search"></i> Tìm kiếm
                                 </button>
                             </div>
@@ -372,7 +368,7 @@ $products = $pdo->query("SELECT product_id, product_name, sku FROM products WHER
                                 </select>
                             </div>
                             <div class="col-md-2">
-                                <button class="btn btn-outline-primary" onclick="searchLogs()">
+                            <button class="btn btn-outline-primary" onclick="barcodeManager.searchLogs()">
                                     <i class="fas fa-search"></i> Tìm kiếm
                                 </button>
                             </div>

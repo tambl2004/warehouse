@@ -22,6 +22,10 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
     <?php if ($option == 'kiemke') { ?>
         <link rel="stylesheet" href="css/kiemke.css">
     <?php } ?>
+    <!-- Thêm vào head -->
+    <?php if ($option == 'barcode') { ?>
+        <script src="https://unpkg.com/@zxing/library@latest"></script>
+    <?php } ?>
 </head>
 <body>
     <!-- Sidebar -->
@@ -237,9 +241,9 @@ $option = isset($_GET['option']) ? $_GET['option'] : 'home';
     <!-- jQuery Library -->
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <?php if ($option == 'rfid') { ?>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="js/rfid.js"></script> 
     <?php } ?>
       
