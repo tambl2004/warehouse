@@ -267,18 +267,26 @@ function generateExportCode() {
                       String(today.getMonth() + 1).padStart(2, '0') + 
                       String(today.getDate()).padStart(2, '0');
     
+  
     fetch(`api/export_handler.php?action=generate_export_code&date=${dateString}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Lỗi HTTP: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
-            if (data.success) {
+            if (data.success && data.export_code) {
                 document.getElementById('exportCode').value = data.export_code;
+            } else {
+                showError('Không thể tạo mã phiếu: ' + (data.message || 'Lỗi không xác định'));
             }
         })
         .catch(error => {
-            console.error('Lỗi khi tạo mã phiếu:', error);
+            console.error('Lỗi khi gọi API tạo mã phiếu:', error);
+            showError('Lỗi kết nối khi tạo mã phiếu: ' + error.message);
         });
 }
-
 /**
  * Thêm dòng sản phẩm
  */

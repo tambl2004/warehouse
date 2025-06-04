@@ -277,23 +277,35 @@ function createExportOrder() {
         // Validate dữ liệu đầu vào
         $export_code = cleanInput($_POST['export_code'] ?? '');
         $destination = cleanInput($_POST['destination'] ?? '');
-        $notes = cleanInput($_POST['notes'] ?? '');
-        $products = $_POST['products'] ?? [];
+        $notes = cleanInput($_POST['notes'] ?? ''); 
+        
+        // Sửa lỗi xử lý dữ liệu products
+        $productsJson = $_POST['products'] ?? '[]';
+        $products = json_decode($productsJson, true); 
+
+        // Kiểm tra lỗi giải mã JSON
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception('Dữ liệu sản phẩm không hợp lệ (JSON decode failed): ' . json_last_error_msg());
+        }
+        if (!is_array($products)) {
+            $products = [];
+        }
+
         $user_id = $_SESSION['user_id'];
         
         if (empty($export_code) || empty($destination)) {
-            throw new Exception('Vui lòng nhập đầy đủ thông tin bắt buộc');
+            throw new Exception('Vui lòng nhập đầy đủ thông tin bắt buộc (Mã phiếu xuất, Đích đến)');
         }
         
         if (empty($products)) {
-            throw new Exception('Vui lòng thêm ít nhất một sản phẩm');
+            throw new Exception('Vui lòng thêm ít nhất một sản phẩm vào phiếu xuất');
         }
         
         // Kiểm tra mã phiếu xuất đã tồn tại
         $check_stmt = $pdo->prepare("SELECT export_id FROM export_orders WHERE export_code = ?");
         $check_stmt->execute([$export_code]);
         if ($check_stmt->fetch()) {
-            throw new Exception('Mã phiếu xuất đã tồn tại');
+            throw new Exception('Mã phiếu xuất đã tồn tại. Vui lòng tạo mã mới.');
         }
         
         // Kiểm tra tồn kho trước khi tạo phiếu
@@ -302,7 +314,8 @@ function createExportOrder() {
             $quantity = (int)($product['quantity'] ?? 0);
             
             if ($product_id <= 0 || $quantity <= 0) {
-                continue;
+                error_log("Sản phẩm không hợp lệ trong phiếu xuất: ID $product_id, Số lượng $quantity");
+                continue; 
             }
             
             $stock_check = $pdo->prepare("SELECT stock_quantity, product_name FROM products WHERE product_id = ?");
@@ -310,21 +323,21 @@ function createExportOrder() {
             $stock_data = $stock_check->fetch();
             
             if (!$stock_data) {
-                throw new Exception("Sản phẩm ID $product_id không tồn tại");
+                throw new Exception("Sản phẩm có ID $product_id không tồn tại trong hệ thống.");
             }
             
             if ($stock_data['stock_quantity'] < $quantity) {
-                throw new Exception("Sản phẩm {$stock_data['product_name']} không đủ tồn kho. Tồn kho hiện tại: {$stock_data['stock_quantity']}, yêu cầu: $quantity");
+                throw new Exception("Sản phẩm '{$stock_data['product_name']}' không đủ tồn kho. Tồn kho hiện tại: {$stock_data['stock_quantity']}, yêu cầu: $quantity");
             }
         }
         
-        // Tạo phiếu xuất
+        // Tạo phiếu xuất - Đã bao gồm cột 'notes'
         $export_sql = "
             INSERT INTO export_orders (export_code, destination, created_by, notes, status, export_date)
             VALUES (?, ?, ?, ?, 'pending', NOW())
         ";
         $stmt = $pdo->prepare($export_sql);
-        $stmt->execute([$export_code, $destination, $user_id, $notes]);
+        $stmt->execute([$export_code, $destination, $user_id, $notes]); // Truyền $notes vào đây
         
         $export_id = $pdo->lastInsertId();
         
@@ -335,14 +348,17 @@ function createExportOrder() {
         ";
         $detail_stmt = $pdo->prepare($detail_sql);
         
+        $hasValidProduct = false; 
         foreach ($products as $product) {
             $product_id = (int)($product['product_id'] ?? 0);
             $quantity = (int)($product['quantity'] ?? 0);
             $unit_price = (float)($product['unit_price'] ?? 0);
             $lot_number = cleanInput($product['lot_number'] ?? '');
-            $shelf_id = !empty($product['shelf_id']) ? (int)$product['shelf_id'] : null;
-            
-            if ($product_id <= 0 || $quantity <= 0 || $unit_price <= 0) {
+            $shelf_id_input = $product['shelf_id'] ?? null;
+            $shelf_id = ($shelf_id_input === '' || $shelf_id_input === null) ? null : (int)$shelf_id_input;
+
+            if ($product_id <= 0 || $quantity <= 0 || $unit_price < 0) { 
+                error_log("Bỏ qua chi tiết sản phẩm không hợp lệ: ID $product_id, SL $quantity, Giá $unit_price");
                 continue;
             }
             
@@ -350,22 +366,30 @@ function createExportOrder() {
                 $export_id, $product_id, $quantity, $unit_price, 
                 $lot_number, $shelf_id
             ]);
+            $hasValidProduct = true;
+        }
+
+        if (!$hasValidProduct && empty($products)) { 
+             $pdo->rollBack();
+             throw new Exception('Phiếu xuất phải có ít nhất một sản phẩm hợp lệ.');
         }
         
         $pdo->commit();
-        
-        // Ghi log
-        logUserActivity($user_id, 'CREATE_EXPORT_ORDER', "Tạo phiếu xuất: $export_code");
-        
+        if (function_exists('logUserActivity')) {
+            logUserActivity($user_id, 'CREATE_EXPORT_ORDER', "Tạo phiếu xuất: $export_code");
+        }
         echo json_encode([
             'success' => true,
-            'message' => 'Tạo phiếu xuất thành công',
+            'message' => 'Tạo phiếu xuất thành công!',
             'export_id' => $export_id
         ]);
         
     } catch (Exception $e) {
-        $pdo->rollBack();
-        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        if ($pdo->inTransaction()) { 
+            $pdo->rollBack();
+        }
+        error_log("Lỗi khi tạo phiếu xuất (createExportOrder): " . $e->getMessage() . " - Trace: " . $e->getTraceAsString());
+        echo json_encode(['success' => false, 'message' => 'Lỗi khi tạo phiếu xuất: ' . $e->getMessage()]);
     }
 }
 
